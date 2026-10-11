@@ -25,8 +25,11 @@ export async function skillsScreen(
   const presetChoices = registry.presets.presets
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((p) => ({
-      name: `${p.name}  ${paint(`(${p.skills.length})`, 'dim')}\n      ${paint(p.description, 'dim')}`,
+      // Single-line names keep the cursor math correct (multi-line names break
+      // arrow-key navigation in the prompts library).
+      name: `${p.name}  ${paint(`(${p.skills.length} skills)`, 'dim')}`,
       value: p.id,
+      description: p.description,
     }));
 
   const pickedPresets = await checkbox({

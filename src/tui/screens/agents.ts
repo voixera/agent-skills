@@ -48,12 +48,13 @@ export async function agentsScreen(
     ...candidates.map((a) => {
       const det = detectAgent(a, projectRoot);
       const status = det.installed ? paint('[installed]', 'ok') : paint('[not installed]', 'warn');
+      // Keep the name plain (no dim) so every agent reads as selectable.
       return {
-        name: `${a.name}  ${paint(`[${a.supportLevel}]`, 'dim')}  ${status}`,
+        name: `${a.name}  [${a.supportLevel}]  ${status}`,
         value: a.id,
       };
     }),
-    { name: paint('\u2190 Back', 'dim'), value: '__back__' },
+    { name: '\u2190 Back', value: '__back__' },
   ];
 
   const picked = await checkbox({
