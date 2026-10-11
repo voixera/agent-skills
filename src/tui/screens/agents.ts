@@ -1,14 +1,18 @@
 /**
  * SCREEN C - AI agent selection.
  *
- * Multi-select of supported agents, filtered by the chosen scope. Shows the
- * support level and evidence so we never imply an agent is verified when it is
- * only documented.
+ * Multi-select of supported agents, filtered by scope, showing:
+ *   - installed / not-installed state (from the detector),
+ *   - support level and evidence.
+ *
+ * After the checkbox, if any selected agent is not installed, the user is
+ * offered a link to that agent's installer page.
  */
 
-import { checkbox } from '@inquirer/prompts';
+import { checkbox, confirm } from '@inquirer/prompts';
 import type { Registry, Scope } from '../../types';
 import { section, paint } from '../components/theme';
+import { detectAgent, openUrl, agentInstallUrl } from '../../core/detect';
 
 export interface AgentChoice {
   agentIds: string[];
@@ -25,6 +29,7 @@ export async function agentsScreen(
     )
   );
 
+  const projectRoot = process.cwd();
   const candidates = registry.agents.agents
     .filter((a) => a.scopes.includes(scope))
     .sort((a, b) => a.id.localeCompare(b.id));
@@ -41,11 +46,13 @@ export async function agentsScreen(
 
   const choices = [
     ...candidates.map((a) => {
+      const det = detectAgent(a, projectRoot);
+      const status = det.installed ? paint('[installed]', 'ok') : paint('[not installed]', 'warn');
       const verified = a.evidence === 'verified' ? paint('verified', 'ok') : paint('documented', 'warn');
       return {
-        name: `${a.name}  ${paint(`[${a.supportLevel}]`, 'dim')}  ${verified}`,
+        name: `${a.name}  ${paint(`[${a.supportLevel}]`, 'dim')}  ${verified}  ${status}`,
         value: a.id,
-        checked: a.evidence === 'verified',
+        checked: det.installed && a.evidence === 'verified',
       };
     }),
     { name: paint('\u2190 Back', 'dim'), value: '__back__' },
@@ -66,5 +73,34 @@ export async function agentsScreen(
   });
 
   if (picked.includes('__back__') && picked.length === 1) return 'back';
-  return { agentIds: picked.filter((v) => v !== '__back__') };
+  const agentIds = picked.filter((v) => v !== '__back__');
+
+  // Offer install links for any selected agent that is not installed.
+  for (const id of agentIds) {
+    const agent = registry.agents.agents.find((a) => a.id === id)!;
+    const det = detectAgent(agent, projectRoot);
+    if (det.installed) continue;
+
+    const url = agentInstallUrl(agent);
+    if (!url) continue;
+
+    process.stdout.write(
+      `\n  ${paint(`${agent.name} does not look installed.`, 'warn')}\n` +
+        `  ${paint(url, 'dim')}\n`
+    );
+    const open = await confirm({
+      message: `Open the ${agent.name} installer page in your browser?`,
+      default: false,
+    });
+    if (open) {
+      const ok = openUrl(url);
+      process.stdout.write(
+        ok
+          ? `  ${paint('Opened in your browser.', 'ok')}\n\n`
+          : `  ${paint('Could not open a browser; visit the URL above.', 'warn')}\n\n`
+      );
+    }
+  }
+
+  return { agentIds };
 }

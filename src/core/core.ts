@@ -11,4 +11,5 @@ export * from './skill-content';
 export * from './engine';
 export * from './installer';
 export * from './uninstaller';
+export * from './detect';
 export { validateSvgText, validateSvgFile } from '../validators/svg';

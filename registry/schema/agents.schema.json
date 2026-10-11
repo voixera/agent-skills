@@ -37,7 +37,8 @@
           "detect": { "type": "array", "items": { "type": "string" } },
           "format": { "type": "string" },
           "limitations": { "type": "array", "items": { "type": "string" } },
-          "docs": { "type": "string" }
+          "docs": { "type": "string" },
+          "installUrl": { "type": "string" }
         }
       }
     }

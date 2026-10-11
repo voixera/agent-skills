@@ -57,8 +57,11 @@ npx agentskillsmd
 
 Then walk through the wizard:
 
-1. **Agents** - multi-select; support level and evidence shown.
-2. **Skills** - pick a preset (it preselects its skills), then customise.
+1. **Agents** - multi-select (choose one or more). Each agent shows its support
+   level, evidence, and whether it is **installed** on your machine. If a chosen
+   agent is not installed, you are offered a link to its installer page.
+2. **Skills** - choose one or more presets; their skills are preselected and you
+   can deselect any you do not want.
 3. **Preview** - files to create/update, conflicts, dependencies. Nothing is
    written until you confirm.
 4. **Install** - real progress for real work.

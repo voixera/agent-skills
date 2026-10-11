@@ -30,6 +30,7 @@ export interface AgentDefinition {
   format: AgentFormat;
   limitations?: string[];
   docs?: string;
+  installUrl?: string;
 }
 
 export interface AgentsRegistry {
