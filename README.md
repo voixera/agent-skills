@@ -8,10 +8,6 @@ One command installs a curated set of engineering rules into your AI coding
 agents - so they write better frontend, backend, tests, security, and SVG
 instead of generic, same-as-everything output.
 
-```bash
-npx agentskillsmd
-```
-
 ## Why
 
 AI coding agents are fast but sloppy in predictable ways. Agent Skills fights
