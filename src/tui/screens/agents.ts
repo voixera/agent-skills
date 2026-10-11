@@ -47,8 +47,8 @@ export async function agentsScreen(
   const choices = [
     ...candidates.map((a) => {
       const det = detectAgent(a, projectRoot);
-      const status = det.installed ? paint('[installed]', 'ok') : paint('[not installed]', 'warn');
-      // Keep the name plain (no dim) so every agent reads as selectable.
+      const status = det.installed ? '[installed]' : '[not installed]';
+      // Plain name only: ANSI in a choice name breaks arrow-key navigation.
       return {
         name: `${a.name}  [${a.supportLevel}]  ${status}`,
         value: a.id,

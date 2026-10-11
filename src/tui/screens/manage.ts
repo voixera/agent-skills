@@ -50,7 +50,9 @@ export async function uninstallScreen(registry: Registry): Promise<'menu' | 'qui
     instructions: '\u2191/\u2193 to navigate  \u2022  Space: select  \u2022  a: all  \u2022  Enter: confirm',
     pageSize: 20,
     required: false,
-    choices: installed.map((id) => ({ name: `${nameOf(id)}  ${paint(`(${id})`, 'dim')}`, value: id })),
+    // Keep choice names plain (no ANSI) - coloured/ANSI names break the cursor
+    // math in @inquirer/prompts and make the list loop on arrow keys.
+    choices: installed.map((id) => ({ name: `${nameOf(id)}  (${id})`, value: id })),
     validate: (choices) => (choices.length === 0 ? 'Select at least one skill (or Esc to go back).' : true),
   });
 
