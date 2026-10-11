@@ -12,4 +12,5 @@ export * from './engine';
 export * from './installer';
 export * from './uninstaller';
 export * from './detect';
+export * from './version';
 export { validateSvgText, validateSvgFile } from '../validators/svg';

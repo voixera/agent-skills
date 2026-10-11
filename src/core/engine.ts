@@ -23,8 +23,9 @@ import {
 import { getSkill } from './registry';
 import { readSkillContent } from './skill-content';
 import { buildManagedBlock, mergeManagedBlock, MANAGED_BLOCK_MARKERS } from './adapters';
+import { toolVersion } from './version';
 
-const TOOL_VERSION = '2.2.4';
+const TOOL_VERSION = toolVersion();
 
 function nowIso(): string {
   return new Date().toISOString();

@@ -8,6 +8,9 @@
  */
 
 import { ansiShadow } from './logo';
+import { toolVersion } from '../../core/version';
+
+export { toolVersion };
 
 export const palette = {
   brand: '\u001b[36m', // cyan
@@ -29,17 +32,6 @@ export function colorEnabled(): boolean {
 export function paint(text: string, color: keyof typeof palette): string {
   if (!colorEnabled()) return text;
   return `${palette[color]}${text}${palette.reset}`;
-}
-
-export function toolVersion(): string {
-  try {
-    // theme.js lives at dist/tui/components/, so the package root is ../../../.
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const pkg = require('../../../package.json') as { version: string };
-    return pkg.version;
-  } catch {
-    return '0.0.0';
-  }
 }
 
 // ---------------------------------------------------------------------------

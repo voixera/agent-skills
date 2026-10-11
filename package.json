@@ -55,6 +55,9 @@
     "start": "node bin/agentskillsmd.js",
     "test": "node --test --test-concurrency=1 --test-timeout=180000 test",
     "validate": "node -e \"require('./dist/core/registry').loadAndValidateRegistry(); console.log('registry valid')\"",
+    "sync-version": "node scripts/sync-version.js",
+    "bump": "npm version patch && node scripts/sync-version.js",
+    "version": "node scripts/sync-version.js",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
