@@ -1,10 +1,10 @@
 /**
- * Shared TUI presentation helpers: the logo, colour palette, and the footer
- * key-hint bar.
+ * Shared TUI presentation helpers: the block-font logo, colour palette, section
+ * headers, and the footer key-hint bar.
  *
- * Colour is applied through ANSI escapes that the inquirer-based screens
- * already support. When the host reports no colour support (NO_COLOR, or a
- * non-TTY), we fall back to plain text.
+ * Colour is applied through ANSI escapes that the inquirer-based screens already
+ * support. When the host reports no colour support (NO_COLOR, or a non-TTY), we
+ * fall back to plain text.
  */
 
 export const palette = {
@@ -12,6 +12,7 @@ export const palette = {
   ok: '\u001b[32m', // green
   warn: '\u001b[33m', // yellow
   error: '\u001b[31m', // red
+  bold: '\u001b[1m',
   dim: '\u001b[2m',
   reset: '\u001b[0m',
 };
@@ -28,15 +29,6 @@ export function paint(text: string, color: keyof typeof palette): string {
   return `${palette[color]}${text}${palette.reset}`;
 }
 
-/** Large ASCII-art logo, shaped to read well in monospace terminals. */
-export const LOGO = String.raw`
-   ___                    __     _____ __ __ _ __
-  / _ | ___ ____ ___  ___ / /_   / ___// //_// //_/
- / __ |/ _ \`/ -_) _ \/ -_) __/  _\__ \/ ,<  / ,<
-/_/ |_/\_, /\__/_//_/\__/\__/  /____//_/|_|/_/|_|
-      /___/
-`.replace(/^\n/, '');
-
 export function toolVersion(): string {
   try {
     // theme.js lives at dist/tui/components/, so the package root is ../../../.
@@ -48,40 +40,76 @@ export function toolVersion(): string {
   }
 }
 
-export function banner(): string {
-  const version = `v${toolVersion()}`;
-  const lines = LOGO.split('\n').filter((l) => l.length > 0);
+// ---------------------------------------------------------------------------
+// Block-font logo
+// ---------------------------------------------------------------------------
+
+/**
+ * A compact 5-row block font for the letters used in the banner. Each glyph is
+ * an array of 5 strings of equal width. Unknown characters render as a space.
+ */
+const GLYPHS: Record<string, string[]> = {
+  A: [' █████╗ ', '██╔══██╗', '███████║', '██╔══██║', '██║  ██║'],
+  G: [' ██████╗ ', '██╔════╝ ', '██║  ███╗', '██║   ██║', '╚██████╔╝'],
+  E: ['███████╗', '██╔════╝', '█████╗  ', '██╔══╝  ', '███████╗'],
+  N: ['███╗   ██╗', '████╗  ██║', '██╔██╗ ██║', '██║╚██╗██║', '██║ ╚████║'],
+  T: ['████████╗', '╚══██╔══╝', '   ██║   ', '   ██║   ', '   ██║   '],
+  S: ['███████╗', '██╔════╝', '███████╗', '╚════██║', '███████║'],
+  K: ['██╗  ██╗', '██║ ██╔╝', '█████╔╝ ', '██╔═██╗ ', '██║  ██╗'],
+  I: ['██╗', '██║', '██║', '██║', '██║'],
+  L: ['██╗     ', '██║     ', '██║     ', '██║     ', '███████╗'],
+  ' ': ['  ', '  ', '  ', '  ', '  '],
+};
+
+/** Render a string as 5 rows of block letters. */
+export function blockFont(text: string): string[] {
+  const rows = ['', '', '', '', ''];
+  for (const ch of text.toUpperCase()) {
+    const glyph = GLYPHS[ch] ?? GLYPHS[' '];
+    for (let r = 0; r < 5; r++) rows[r] += glyph[r];
+  }
+  return rows;
+}
+
+export function logo(): string {
+  const rows = blockFont('AGENT SKILLS');
   const out: string[] = [''];
-  for (const l of lines) out.push(paint(l, 'brand'));
+  for (const r of rows) out.push('  ' + paint(r, 'brand'));
   out.push('');
-  out.push(`  ${paint('AGENT SKILLS', 'brand')}  ${paint(version, 'dim')}`);
-  out.push(
-    `  ${paint(
-      'Multi-agent skills manager and anti-slop engineering toolkit.',
-      'dim'
-    )}`
-  );
+  return out.join('\n');
+}
+
+/** The full banner: logo, one-line description, version. */
+export function banner(): string {
+  const out: string[] = [logo()];
+  out.push(`  ${paint('Anti-slop rules for AI coding agents.', 'dim')}`);
+  out.push(`  ${paint('Multi-agent skills manager  \u2022  v' + toolVersion(), 'dim')}`);
+  out.push('');
+  return out.join('\n');
+}
+
+// ---------------------------------------------------------------------------
+// Section headers and key hints
+// ---------------------------------------------------------------------------
+
+/** A section header, styled like the reference installers. */
+export function section(title: string, subtitle?: string): string {
+  const out = [``, `  ${paint(title, 'bold')}`];
+  if (subtitle) out.push(`  ${paint(subtitle, 'dim')}`);
   out.push('');
   return out.join('\n');
 }
 
 export const KEY_HINTS = {
-  navigate: '\u2191\u2193 navigate',
-  toggle: 'space toggle',
-  confirm: 'enter confirm',
-  back: 'esc back',
-  all: 'a select all',
-  quit: 'ctrl+c quit',
+  navigate: '\u2191/\u2193 to navigate',
+  toggle: 'Space: select',
+  confirm: 'Enter: confirm',
+  back: 'Esc: back',
+  all: 'a: all',
+  quit: 'Ctrl+C: quit',
 };
 
 export function hintBar(keys: (keyof typeof KEY_HINTS)[]): string {
   const sep = paint('  \u2022  ', 'dim');
   return paint(keys.map((k) => KEY_HINTS[k]).join(sep), 'dim');
-}
-
-/** A labelled section header for the non-fullscreen screens. */
-export function section(title: string, subtitle?: string): string {
-  const out = [`\n  ${paint(title, 'brand')}`];
-  if (subtitle) out.push(`  ${paint(subtitle, 'dim')}`);
-  return out.join('\n') + '\n';
 }

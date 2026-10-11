@@ -1,13 +1,13 @@
 /**
  * SCREEN A - Welcome / main menu.
  *
- * Logo, description, version, and the primary actions. No command typing
- * required: everything is reachable from here.
+ * Logo, one-line description, version, and the primary actions. No command
+ * typing required: everything is reachable from here.
  */
 
 import { select } from '@inquirer/prompts';
 import type { Registry } from '../../types';
-import { banner, paint } from '../components/theme';
+import { banner, paint, toolVersion } from '../components/theme';
 
 export type MainAction = 'install' | 'verify' | 'update' | 'uninstall' | 'quit';
 
@@ -15,13 +15,13 @@ export async function welcomeScreen(registry: Registry): Promise<MainAction> {
   process.stdout.write(banner());
 
   const stats = `${registry.skills.skills.length} skills  \u2022  ${registry.agents.agents.length} agents  \u2022  ${registry.presets.presets.length} presets`;
-  process.stdout.write(`  ${paint(stats, 'dim')}\n\n`);
+  process.stdout.write(`  ${paint(stats, 'dim')}\n`);
 
   const choice = await select<MainAction>({
     message: 'What would you like to do?',
     loop: false,
     choices: [
-      { name: 'Start installation', value: 'install' },
+      { name: 'Install skills into your agent setup', value: 'install' },
       { name: 'Verify installed skills', value: 'verify' },
       { name: 'Update installed skills', value: 'update' },
       { name: 'Uninstall skills', value: 'uninstall' },
@@ -43,3 +43,5 @@ export async function postActionMenu(): Promise<'menu' | 'quit'> {
   });
   return choice;
 }
+
+export { toolVersion };

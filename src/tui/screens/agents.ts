@@ -52,7 +52,8 @@ export async function agentsScreen(
   ];
 
   const picked = await checkbox({
-    message: 'Agents (space to toggle, enter to confirm)',
+    message: 'Select the AI agents to install into',
+    instructions: '\u2191/\u2193 to navigate  \u2022  Space: select  \u2022  Enter: confirm',
     choices,
     pageSize: 14,
     required: false,

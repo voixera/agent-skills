@@ -24,8 +24,9 @@ export async function scopeScreen(_registry: Registry): Promise<ScopeChoice | 'b
   const home = homeDirectory();
 
   const choice = await select({
-    message: 'Scope',
+    message: 'Where should the skills be installed?',
     loop: false,
+    instructions: { navigation: '\u2191/\u2193 to navigate', pager: 'Enter: confirm' },
     choices: [
       {
         name: `This project\n      ${cwd}\n      Skills are written into this folder and can be committed with your code.`,

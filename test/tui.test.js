@@ -27,7 +27,8 @@ test('banner and description render', () => {
     env: { ...process.env, AGENT_SKILLS_NO_COLOR: '1' },
   });
   assert.strictEqual(r.status, 0);
-  assert.match(r.stdout, /AGENT SKILLS/);
+  // The block-font logo and the description line.
+  assert.match(r.stdout, /Anti-slop rules for AI coding agents/);
   assert.match(r.stdout, /Multi-agent skills manager/);
   assert.ok(r.stdout.includes(`v${pkg.version}`), `expected banner to show v${pkg.version}`);
 });
@@ -63,6 +64,6 @@ test('interactive branch enters the TUI when a TTY is present', () => {
   });
   // The TUI must not print the "needs a terminal" notice when a TTY is present.
   assert.doesNotMatch(r.stdout, /needs an interactive terminal/i);
-  // The banner must appear.
-  assert.match(r.stdout, /AGENT SKILLS/);
+  // The banner must appear (description line + stats).
+  assert.match(r.stdout, /Anti-slop rules for AI coding agents/);
 });

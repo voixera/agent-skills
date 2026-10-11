@@ -53,7 +53,8 @@ export async function skillsScreen(
   presetChoices.push({ name: paint('\u2190 Back', 'dim'), value: '__back__' });
 
   const presetId = await select({
-    message: 'Preset',
+    message: 'Choose a starting point',
+    instructions: { navigation: '\u2191/\u2193 to navigate', pager: 'Enter: confirm' },
     loop: false,
     pageSize: 12,
     choices: presetChoices,
@@ -92,7 +93,8 @@ export async function skillsScreen(
 
   process.stdout.write('\n');
   const picked = await checkbox({
-    message: 'Skills (space toggles, "a" toggles all, enter confirms)',
+    message: 'Extra skills to install',
+    instructions: '\u2191/\u2193 to navigate  \u2022  Space: select  \u2022  a: all  \u2022  Enter: confirm',
     choices,
     pageSize: 20,
     required: false,
