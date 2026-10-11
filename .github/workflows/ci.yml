@@ -85,15 +85,30 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
+        shell: bash
         run: npm ci --ignore-scripts
 
       - name: Build (TypeScript)
+        shell: bash
         run: npm run build
 
       - name: Test (Node)
-        run: npm test
+        shell: bash
+        run: |
+          set +e
+          node --version
+          echo "--- test files ---"
+          ls -la test/
+          echo "--- run ---"
+          npm test > test-output.txt 2>&1
+          code=$?
+          echo "----- test output -----"
+          cat test-output.txt
+          echo "----- end test output (exit $code) -----"
+          exit $code
 
       - name: Verify the CLI runs in a non-TTY environment
+        shell: bash
         run: node bin/agentskillsmd.js
 
   secret-scan:
