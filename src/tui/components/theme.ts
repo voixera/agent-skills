@@ -7,7 +7,7 @@
  * fall back to plain text.
  */
 
-import { ansiShadow } from './logo';
+import { pickLogo } from './logo';
 import { toolVersion } from '../../core/version';
 
 export { toolVersion };
@@ -23,8 +23,8 @@ export const palette = {
 };
 
 export function colorEnabled(): boolean {
-  if (process.env.NO_COLOR) return false;
   if (process.env.AGENT_SKILLS_NO_COLOR) return false;
+  if (process.env.NO_COLOR) return false;
   if (process.env.FORCE_COLOR) return true;
   return Boolean(process.stdout.isTTY);
 }
@@ -38,23 +38,18 @@ export function paint(text: string, color: keyof typeof palette): string {
 // Logo
 // ---------------------------------------------------------------------------
 
-export function logo(): string {
-  return ansiShadow('AGENT SKILLS').join('\n');
+export function logo(columns: number = process.stdout.columns ?? 80): string {
+  const { lines } = pickLogo('AGENT SKILLS', columns);
+  return lines.map((l) => '  ' + l).join('\n');
 }
 
 /** The full banner: logo, one-line description, version. */
 export function banner(): string {
-  const art = ansiShadow('AGENT SKILLS');
   const width = process.stdout.columns ?? 80;
-  const artWidth = art[0]?.length ?? 0;
+  const { lines } = pickLogo('AGENT SKILLS', width);
 
   const out: string[] = [''];
-  if (width >= artWidth + 2) {
-    for (const row of art) out.push('  ' + paint(row, 'brand'));
-  } else {
-    // Narrow terminal: a compact wordmark instead of clipped art.
-    out.push('  ' + paint('A G E N T   S K I L L S', 'brand'));
-  }
+  for (const row of lines) out.push('  ' + paint(row, 'brand'));
   out.push('');
   out.push(`  ${paint('Anti-slop rules for AI coding agents.', 'dim')}`);
   out.push(`  ${paint('Multi-agent skills manager  \u2022  v' + toolVersion(), 'dim')}`);

@@ -45,18 +45,19 @@ export async function agentsScreen(
     );
   }
 
-  // Colour legend (kept outside the prompt so the choice list stays plain).
+  // Legend. Uses both colour and a marker so it reads even without colour.
   process.stdout.write(
-    `  ${paint('installed', 'ok')}  /  ${paint('not installed', 'warn')}\n\n`
+    `  ${paint('\u2713 installed', 'ok')}   ${paint('\u00b7 not installed', 'warn')}\n\n`
   );
 
   const choices = [
     ...candidates.map((a) => {
       const det = detectAgent(a, projectRoot);
-      const status = det.installed ? '[installed]' : '[not installed]';
+      const mark = det.installed ? '\u2713' : '\u00b7';
+      const status = det.installed ? 'installed' : 'not installed';
       // Plain name only: ANSI in a choice name breaks arrow-key navigation.
       return {
-        name: `${a.name}  [${a.supportLevel}]  ${status}`,
+        name: `${mark} ${a.name}  [${a.supportLevel}]  ${status}`,
         value: a.id,
       };
     }),

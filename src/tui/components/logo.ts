@@ -1,14 +1,19 @@
 /**
- * BIG.LOGO - ANSI-shadow wordmark for the TUI.
+ * Logos for the TUI banner.
  *
- * Renders "AGENT SKILLS" as the classic ANSI-shadow figlet style (thick block
- * letters with a shadow), the look used by modern terminal installers. Falls
- * back to a plain two-line wordmark when the terminal is narrow.
+ * Two hand-rolled figlet-style wordmarks, pre-rendered so we do not ship a
+ * figlet dependency:
+ *   - ansiShadow: the classic thick block letters with a shadow (wide, 6 rows)
+ *   - small:      a compact 3-row mark that fits an 80-column terminal
+ *
+ * The banner picks the widest one that fits the current terminal.
  */
 
-// The wordmark is pre-rendered so we do not ship a figlet dependency. Each glyph
-// is the standard ANSI-shadow shape (5 rows tall) for the letters we need.
-const GLYPHS: Record<string, string[]> = {
+// ---------------------------------------------------------------------------
+// ANSI-shadow (wide, 6 rows)
+// ---------------------------------------------------------------------------
+
+const SHADOW: Record<string, string[]> = {
   A: [' █████╗ ', '██╔══██╗', '███████║', '██╔══██║', '██║  ██║', '╚═╝  ╚═╝'],
   G: [' ██████╗ ', '██╔════╝ ', '██║  ███╗', '██║   ██║', '╚██████╔╝', ' ╚═════╝ '],
   E: ['███████╗', '██╔════╝', '█████╗  ', '██╔══╝  ', '███████╗', '╚══════╝'],
@@ -24,14 +29,54 @@ const GLYPHS: Record<string, string[]> = {
 export function ansiShadow(text: string): string[] {
   const rows = ['', '', '', '', '', ''];
   for (const ch of text.toUpperCase()) {
-    const g = GLYPHS[ch] ?? GLYPHS[' '];
+    const g = SHADOW[ch] ?? SHADOW[' '];
     for (let i = 0; i < rows.length; i++) rows[i] += g[i];
   }
-  // Drop trailing spaces on each row.
   return rows.map((r) => r.replace(/\s+$/, ''));
 }
 
-/** Plain two-line fallback used when the terminal is too narrow. */
-export function plainWordmark(): string[] {
-  return ['A G E N T   S K I L L S'];
+// ---------------------------------------------------------------------------
+// Small (compact, 3 rows) - fits an 80-column terminal for "AGENT SKILLS"
+// ---------------------------------------------------------------------------
+
+const SMALL: Record<string, string[]> = {
+  A: ['  _   ', ' /_\\  ', '/_/ \\_\\'],
+  G: ['  ___ ', ' / __|', '| (_ |'],
+  E: [' ___ ', '| __|', '|___|'],
+  N: [' _  _ ', '| \\| |', '|_|\\_|'],
+  T: ['_____ ', '  |   ', '  |   '],
+  S: [' ___ ', '/ __|', '\\__ \\'],
+  K: [' _  _ ', '| |/ /', '|_|\\_\\'],
+  I: ['___ ', ' |  ', '_|_ '],
+  L: [' _   ', '| |  ', '|_|  '],
+  ' ': [' ', ' ', ' '],
+};
+
+export function smallFont(text: string): string[] {
+  const rows = ['', '', ''];
+  for (const ch of text.toUpperCase()) {
+    const g = SMALL[ch] ?? SMALL[' '];
+    for (let i = 0; i < rows.length; i++) rows[i] += g[i];
+  }
+  return rows.map((r) => r.replace(/\s+$/, ''));
+}
+
+/**
+ * Pick the widest wordmark that fits `columns`, else a one-line wordmark.
+ * Returns the lines plus the font used.
+ */
+export function pickLogo(
+  text: string,
+  columns: number
+): { lines: string[]; font: 'shadow' | 'small' | 'plain' } {
+  const indent = 2;
+  const fits = (lines: string[]) => Math.max(...lines.map((l) => l.length)) + indent <= columns;
+
+  const big = ansiShadow(text);
+  if (fits(big)) return { lines: big, font: 'shadow' };
+
+  const mid = smallFont(text);
+  if (fits(mid)) return { lines: mid, font: 'small' };
+
+  return { lines: [text.toUpperCase().split('').join(' ')], font: 'plain' };
 }

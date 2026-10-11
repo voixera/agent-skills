@@ -41,15 +41,11 @@ export async function uninstallScreen(registry: Registry): Promise<'menu' | 'qui
     }
   };
 
-  process.stdout.write(`  ${paint(`Installed skills (${installed.length}):`, 'bold')}\n`);
-  for (const id of installed) {
-    process.stdout.write(`    ${paint('\u2022', 'ok')} ${nameOf(id)}  ${paint(`(${id})`, 'dim')}\n`);
-  }
-  process.stdout.write('\n');
-
+  // Single list: the checkbox itself is the list of installed skills (showing it
+  // twice made the screen look like it repeated).
   const picked = await plainCheckbox<string>({
-    message: 'Select the skills to remove',
-    pageSize: 10,
+    message: `Select the skills to remove (${installed.length} installed)`,
+    pageSize: 12,
     choices: installed.map((id) => ({ name: `${nameOf(id)}  (${id})`, value: id })),
   });
 

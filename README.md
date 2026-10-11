@@ -43,7 +43,7 @@ npx agentskillsmd
   ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚══════╝
 
   Anti-slop rules for AI coding agents.
-  Multi-agent skills manager  •  v2.2.4
+  Multi-agent skills manager  •  v2.2.5
   55 skills  •  12 agents  •  7 presets
 
 ? What would you like to do?
