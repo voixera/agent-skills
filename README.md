@@ -1,3 +1,5 @@
+![Agent Skills installer](docs/assets/AgentSkills.png)
+
 # Agent Skills
 
 **Multi-agent skills manager and anti-slop engineering toolkit.**
@@ -5,12 +7,6 @@
 One command installs a curated set of engineering rules into your AI coding
 agents - so they write better frontend, backend, tests, security, and SVG
 instead of generic, same-as-everything output.
-
-```bash
-npx agentskillsmd
-```
-
-![Agent Skills installer](docs/assets/AgentSkills.png)
 
 <!-- Badges: fill in the npm/CI links once published. -->
 
