@@ -113,8 +113,9 @@ That is the entire requirement list - no PowerShell, Python, or other runtime.
 - **Support level** - how the agent discovers skills: `native` (discrete
   `SKILL.md`), `rules` (per-file rule documents), or `instructions` (one
   aggregated file with a managed block).
-- All adapters are marked `verified`; each agent's path and format is documented
-  under `adapters/<id>/README.md`.
+- **Evidence** - `verified` means the path/format was observed in a real
+  installation; `documented` means it comes from vendor docs and was not tested
+  locally. Codex, Claude Code, Gemini CLI, and OpenCode are `verified`.
 
 ## Skill catalog
 

@@ -1,11 +1,13 @@
 /**
- * Shared TUI presentation helpers: the block-font logo, colour palette, section
- * headers, and the footer key-hint bar.
+ * Shared TUI presentation helpers: the logo, colour palette, section headers,
+ * and the footer key-hint bar.
  *
  * Colour is applied through ANSI escapes that the inquirer-based screens already
  * support. When the host reports no colour support (NO_COLOR, or a non-TTY), we
  * fall back to plain text.
  */
+
+import { ansiShadow } from './logo';
 
 export const palette = {
   brand: '\u001b[36m', // cyan
@@ -41,47 +43,27 @@ export function toolVersion(): string {
 }
 
 // ---------------------------------------------------------------------------
-// Block-font logo
+// Logo
 // ---------------------------------------------------------------------------
 
-/**
- * A compact 5-row block font for the letters used in the banner. Each glyph is
- * an array of 5 strings of equal width. Unknown characters render as a space.
- */
-const GLYPHS: Record<string, string[]> = {
-  A: [' █████╗ ', '██╔══██╗', '███████║', '██╔══██║', '██║  ██║'],
-  G: [' ██████╗ ', '██╔════╝ ', '██║  ███╗', '██║   ██║', '╚██████╔╝'],
-  E: ['███████╗', '██╔════╝', '█████╗  ', '██╔══╝  ', '███████╗'],
-  N: ['███╗   ██╗', '████╗  ██║', '██╔██╗ ██║', '██║╚██╗██║', '██║ ╚████║'],
-  T: ['████████╗', '╚══██╔══╝', '   ██║   ', '   ██║   ', '   ██║   '],
-  S: ['███████╗', '██╔════╝', '███████╗', '╚════██║', '███████║'],
-  K: ['██╗  ██╗', '██║ ██╔╝', '█████╔╝ ', '██╔═██╗ ', '██║  ██╗'],
-  I: ['██╗', '██║', '██║', '██║', '██║'],
-  L: ['██╗     ', '██║     ', '██║     ', '██║     ', '███████╗'],
-  ' ': ['  ', '  ', '  ', '  ', '  '],
-};
-
-/** Render a string as 5 rows of block letters. */
-export function blockFont(text: string): string[] {
-  const rows = ['', '', '', '', ''];
-  for (const ch of text.toUpperCase()) {
-    const glyph = GLYPHS[ch] ?? GLYPHS[' '];
-    for (let r = 0; r < 5; r++) rows[r] += glyph[r];
-  }
-  return rows;
-}
-
 export function logo(): string {
-  const rows = blockFont('AGENT SKILLS');
-  const out: string[] = [''];
-  for (const r of rows) out.push('  ' + paint(r, 'brand'));
-  out.push('');
-  return out.join('\n');
+  return ansiShadow('AGENT SKILLS').join('\n');
 }
 
 /** The full banner: logo, one-line description, version. */
 export function banner(): string {
-  const out: string[] = [logo()];
+  const art = ansiShadow('AGENT SKILLS');
+  const width = process.stdout.columns ?? 80;
+  const artWidth = art[0]?.length ?? 0;
+
+  const out: string[] = [''];
+  if (width >= artWidth + 2) {
+    for (const row of art) out.push('  ' + paint(row, 'brand'));
+  } else {
+    // Narrow terminal: a compact wordmark instead of clipped art.
+    out.push('  ' + paint('A G E N T   S K I L L S', 'brand'));
+  }
+  out.push('');
   out.push(`  ${paint('Anti-slop rules for AI coding agents.', 'dim')}`);
   out.push(`  ${paint('Multi-agent skills manager  \u2022  v' + toolVersion(), 'dim')}`);
   out.push('');
