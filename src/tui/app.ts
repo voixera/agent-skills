@@ -69,6 +69,10 @@ async function runFlow(state: AppState): Promise<{ action: 'menu' | 'quit' | 'ex
 
   const skills = await skillsScreen(state.registry, agents.agentIds);
   if (skills === 'back') return { action: 'menu', exitCode: 0 };
+  if (!skills.skillIds || skills.skillIds.length === 0) {
+    process.stdout.write('  No skills selected.\n\n');
+    return { action: 'menu', exitCode: 0 };
+  }
 
   const preview = await previewScreen(state.registry, {
     scope: SCOPE,

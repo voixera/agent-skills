@@ -9,9 +9,10 @@
  * offered a link to that agent's installer page.
  */
 
-import { checkbox, confirm } from '@inquirer/prompts';
+import { confirm } from '@inquirer/prompts';
 import type { Registry, Scope } from '../../types';
 import { section, paint } from '../components/theme';
+import { plainCheckbox } from '../components/prompts';
 import { detectAgent, openUrl, agentInstallUrl } from '../../core/detect';
 
 export interface AgentChoice {
@@ -44,6 +45,11 @@ export async function agentsScreen(
     );
   }
 
+  // Colour legend (kept outside the prompt so the choice list stays plain).
+  process.stdout.write(
+    `  ${paint('installed', 'ok')}  /  ${paint('not installed', 'warn')}\n\n`
+  );
+
   const choices = [
     ...candidates.map((a) => {
       const det = detectAgent(a, projectRoot);
@@ -57,18 +63,10 @@ export async function agentsScreen(
     { name: '\u2190 Back', value: '__back__' },
   ];
 
-  const picked = await checkbox({
+  const picked = await plainCheckbox<string>({
     message: 'Select the AI agents to install into',
-    instructions: '\u2191/\u2193 to navigate  \u2022  Space: select  \u2022  Enter: confirm',
-    choices,
     pageSize: 14,
-    required: false,
-    validate: (choices) => {
-      const values = choices.map((c) => c.value);
-      if (values.includes('__back__')) return true;
-      if (values.length === 0) return 'Select at least one agent (or choose Back).';
-      return true;
-    },
+    choices,
   });
 
   if (picked.includes('__back__') && picked.length === 1) return 'back';

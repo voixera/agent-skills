@@ -5,9 +5,9 @@
  * recorded in the manifest are removed; nothing else is touched.
  */
 
-import { select, checkbox } from '@inquirer/prompts';
 import type { Registry } from '../../types';
 import { section, paint } from '../components/theme';
+import { plainCheckbox } from '../components/prompts';
 import { uninstall } from '../../core/installer';
 import { installedSkillIds, readManifest } from '../../core/manifest';
 import { getSkill } from '../../core/registry';
@@ -42,18 +42,15 @@ export async function uninstallScreen(registry: Registry): Promise<'menu' | 'qui
   };
 
   process.stdout.write(`  ${paint(`Installed skills (${installed.length}):`, 'bold')}\n`);
-  for (const id of installed) process.stdout.write(`    - ${nameOf(id)}  ${paint(`(${id})`, 'dim')}\n`);
+  for (const id of installed) {
+    process.stdout.write(`    ${paint('\u2022', 'ok')} ${nameOf(id)}  ${paint(`(${id})`, 'dim')}\n`);
+  }
   process.stdout.write('\n');
 
-  const picked = await checkbox({
+  const picked = await plainCheckbox<string>({
     message: 'Select the skills to remove',
-    instructions: '\u2191/\u2193 to navigate  \u2022  Space: select  \u2022  a: all  \u2022  Enter: confirm',
-    pageSize: 20,
-    required: false,
-    // Keep choice names plain (no ANSI) - coloured/ANSI names break the cursor
-    // math in @inquirer/prompts and make the list loop on arrow keys.
+    pageSize: 10,
     choices: installed.map((id) => ({ name: `${nameOf(id)}  (${id})`, value: id })),
-    validate: (choices) => (choices.length === 0 ? 'Select at least one skill (or Esc to go back).' : true),
   });
 
   if (picked.length === 0) return 'menu';

@@ -6,9 +6,9 @@
  * wizard then previews and installs.
  */
 
-import { checkbox } from '@inquirer/prompts';
 import type { Registry } from '../../types';
-import { section, paint } from '../components/theme';
+import { section } from '../components/theme';
+import { plainCheckbox } from '../components/prompts';
 import { expandPreset } from '../../core/resolver';
 
 export interface SkillChoice {
@@ -32,13 +32,10 @@ export async function skillsScreen(
       description: p.description,
     }));
 
-  const pickedPresets = await checkbox({
+  const pickedPresets = await plainCheckbox<string>({
     message: 'Choose your skills (space to toggle)',
-    instructions: '\u2191/\u2193 to navigate  \u2022  Space: select  \u2022  a: all  \u2022  Enter: confirm',
-    pageSize: 12,
-    required: false,
+    pageSize: 10,
     choices: presetChoices,
-    validate: (choices) => (choices.length === 0 ? 'Select at least one preset.' : true),
   });
 
   // Merge the selected presets' skills (the resolver also adds dependencies).
@@ -47,8 +44,12 @@ export async function skillsScreen(
     for (const skillId of expandPreset(registry, id)) merged.add(skillId);
   }
 
+  if (pickedPresets.length === 0) {
+    return { skillIds: [], presetId: undefined };
+  }
+
   process.stdout.write(
-    `\n  ${paint(`Selected ${pickedPresets.length} preset(s).`, 'ok')}\n`
+    `\n  Selected ${pickedPresets.length} preset(s).\n`
   );
 
   return {
