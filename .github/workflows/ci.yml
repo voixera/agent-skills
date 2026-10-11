@@ -48,6 +48,8 @@ jobs:
       - name: Install PSScriptAnalyzer
         shell: powershell
         run: |
+          $ErrorActionPreference = 'Stop'
+          Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser | Out-Null
           Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
           Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force -AllowClobber
 
@@ -55,16 +57,21 @@ jobs:
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
-          $files = Get-ChildItem -Recurse -Include *.ps1, *.psm1 -Path src, installer, tests
-          $issues = Invoke-ScriptAnalyzer -Path src, installer -Severity Error
-          if ($issues) {
-            $issues | Format-Table -AutoSize
+          Import-Module PSScriptAnalyzer
+          # Invoke-ScriptAnalyzer's -Path binds a single path per call, so scan
+          # each directory independently.
+          $issues = @()
+          foreach ($dir in @('src', 'installer', 'tests')) {
+            $issues += Invoke-ScriptAnalyzer -Path $dir -Severity Error
+          }
+          if ($issues.Count -gt 0) {
+            $issues | Format-Table RuleName, ScriptName, Line, Message -AutoSize
             throw "PSScriptAnalyzer found $($issues.Count) error-level issue(s)."
           }
           Write-Host "PSScriptAnalyzer: no error-level issues."
 
       - name: Lint markdown
-        shell: powershell
+        shell: bash
         run: |
           npx --yes markdownlint-cli@0.42.0 "**/*.md" --config .markdownlint.json --ignore node_modules
         continue-on-error: true

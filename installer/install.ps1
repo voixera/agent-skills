@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Agent Skills - Multi-Agent Skills Manager (CLI entry point).
@@ -61,7 +61,7 @@ $EXIT_NOTHING  = 4
 # Kept minimal on purpose: a tiny table-driven parser is easier to audit than a
 # framework, and works identically under PowerShell 5.1 and 7.
 # ---------------------------------------------------------------------------
-function Parse-Args {
+function ConvertFrom-CliArgs {
     param([string[]] $Tokens)
 
     $opts = @{
@@ -78,9 +78,9 @@ function Parse-Args {
             $inline = $null
             if ($name -match '^([^=]+)=(.*)$') { $name = $Matches[1]; $inline = $Matches[2] }
 
-            if ($knownValueFlags -contains $name -or $inline -ne $null) {
+            if ($knownValueFlags -contains $name -or $null -ne $inline) {
                 $value = $null
-                if ($inline -ne $null) {
+                if ($null -ne $inline) {
                     $value = $inline
                 } elseif ($i + 1 -lt $Tokens.Count -and $Tokens[$i + 1] -notmatch '^--?') {
                     $i++
@@ -101,7 +101,7 @@ function Parse-Args {
     return $opts
 }
 
-function Split-List {
+function ConvertTo-List {
     param([string] $Value)
     if ([string]::IsNullOrWhiteSpace($Value)) { return @() }
     return @($Value -split '[,\s]+' | Where-Object { $_ -ne '' })
@@ -235,7 +235,7 @@ function Resolve-Selection {
     param($Opts)
 
     $skillIds = @()
-    if ($Opts.Values.ContainsKey('skills')) { $skillIds += Split-List -Value $Opts.Values['skills'] }
+    if ($Opts.Values.ContainsKey('skills')) { $skillIds += ConvertTo-List -Value $Opts.Values['skills'] }
     if ($Opts.Values.ContainsKey('preset') -and $Opts.Values['preset']) {
         $presetSkills = Get-AgentSkillsPresetSkills -PresetId $Opts.Values['preset']
         $skillIds += $presetSkills
@@ -246,7 +246,7 @@ function Resolve-Selection {
 function Get-AgentSelection {
     param($Opts, [switch] $Interactive)
     if ($Opts.Values.ContainsKey('agents') -and $Opts.Values['agents']) {
-        return (Split-List -Value $Opts.Values['agents'])
+        return (ConvertTo-List -Value $Opts.Values['agents'])
     }
     return @()
 }
@@ -341,10 +341,9 @@ function Invoke-UninstallCommand {
     $projectRoot = Get-ProjectRoot -Opts $Opts
     $all = $Opts.Flags.Contains('all')
     $whatIf = $Opts.Flags.Contains('preview') -or $Opts.Flags.Contains('dry-run')
-    $assumeYes = $Opts.Flags.Contains('yes') -or $Opts.Flags.Contains('y')
 
-    $skillIds = if ($Opts.Values.ContainsKey('skills')) { Split-List -Value $Opts.Values['skills'] } else { @() }
-    $agentIds = if ($Opts.Values.ContainsKey('agents')) { Split-List -Value $Opts.Values['agents'] } else { @() }
+    $skillIds = if ($Opts.Values.ContainsKey('skills')) { ConvertTo-List -Value $Opts.Values['skills'] } else { @() }
+    $agentIds = if ($Opts.Values.ContainsKey('agents')) { ConvertTo-List -Value $Opts.Values['agents'] } else { @() }
 
     if (-not $all -and -not $skillIds -and -not $agentIds) {
         Write-Host '[error] uninstall requires -Skills, -Agents, or -All' -ForegroundColor Red
@@ -582,14 +581,14 @@ Examples:
 $commandName = if ($Command) { $Command.ToLowerInvariant() } else { '' }
 if ($Rest) {
     # Allow `install.ps1 install -Skills ...` (options after the command).
-    $opts = Parse-Args -Tokens $Rest
+    $opts = ConvertFrom-CliArgs -Tokens $Rest
 } else {
-    $opts = Parse-Args -Tokens @()
+    $opts = ConvertFrom-CliArgs -Tokens @()
 }
 
 # Support `-Help` / `--help` as the first token.
 if ($Command -match '^-' ) {
-    $opts = Parse-Args -Tokens (@($Command) + @($Rest))
+    $opts = ConvertFrom-CliArgs -Tokens (@($Command) + @($Rest))
     $commandName = 'help'
 }
 

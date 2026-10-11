@@ -99,7 +99,9 @@ try {
     }
 
     # Forward arguments. If none were passed positionally, allow the environment
-    # variable (useful for the one-liner form).
+    # variable (useful for the one-liner form). NOTE: the environment variable is
+    # split on whitespace, so prefer -InstallerArgs when an argument value (for
+    # example a -Path) contains spaces.
     if (-not $InstallerArgs -and $env:AGENT_SKILLS_BOOTSTRAP_ARGS) {
         $InstallerArgs = @($env:AGENT_SKILLS_BOOTSTRAP_ARGS -split '\s+' | Where-Object { $_ -ne '' })
     }

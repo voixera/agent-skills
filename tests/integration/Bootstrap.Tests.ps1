@@ -32,12 +32,23 @@ function Invoke-Bootstrap {
     $repoRoot = Get-AgentSkillsRepoRoot
     $script = Join-Path $repoRoot 'installer\bootstrap.ps1'
     $env:AGENT_SKILLS_NO_COLOR = '1'
-    $env:AGENT_SKILLS_ARCHIVE_URL = $ArchiveUrl
+
+    # Pass the archive URL and the installer arguments as real arrays via a
+    # -Command invocation. The env-var path splits on whitespace, which breaks
+    # paths that contain spaces (e.g. "C:\Users\First Last\..."), so it is not
+    # used for tests that pass -Path.
+    $argList = ($InstallerArgs | ForEach-Object { "'" + ($_ -replace "'", "''") + "'" }) -join ','
+    $command = @(
+        "`$env:AGENT_SKILLS_ARCHIVE_URL = '$ArchiveUrl'",
+        "& '$script' -InstallerArgs @($argList)"
+    ) -join '; '
+
     try {
-        $output = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $script -InstallerArgs $InstallerArgs 2>&1
+        $output = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command $command 2>&1
         return [pscustomobject]@{ Output = ($output -join "`n"); ExitCode = $LASTEXITCODE }
     } finally {
         Remove-Item Env:\AGENT_SKILLS_ARCHIVE_URL -ErrorAction SilentlyContinue
+        Remove-Item Env:\AGENT_SKILLS_BOOTSTRAP_ARGS -ErrorAction SilentlyContinue
     }
 }
 
@@ -71,8 +82,16 @@ function Test_Bootstrap_installs_into_target_project {
 function Test_Bootstrap_rejects_placeholder_org {
     $repoRoot = Get-AgentSkillsRepoRoot
     $script = Join-Path $repoRoot 'installer\bootstrap.ps1'
-    # No archive URL env, no -RepoArchiveUrl -> should throw on the placeholder.
+    # Ensure neither override is present, so the placeholder path is taken.
     Remove-Item Env:\AGENT_SKILLS_ARCHIVE_URL -ErrorAction SilentlyContinue
     Remove-Item Env:\AGENT_SKILLS_REPO_URL -ErrorAction SilentlyContinue
-    Assert-Throws { & $script -InstallerArgs @('list') } 'placeholder'
+    Remove-Item Env:\AGENT_SKILLS_BOOTSTRAP_ARGS -ErrorAction SilentlyContinue
+
+    # Run in a subprocess: bootstrap may call exit(), which must not kill the
+    # test runner. Use cmd /c to fully isolate the process and capture output.
+    $cmd = 'powershell -NoProfile -ExecutionPolicy Bypass -File "' + $script + '" -InstallerArgs list'
+    $output = & cmd.exe /c "$cmd 2>&1"
+    $code = $LASTEXITCODE
+    Assert-True ($code -ne 0) 'Bootstrap should fail when the repo URL is still the placeholder.'
+    Assert-Match ($output -join "`n") 'placeholder'
 }
