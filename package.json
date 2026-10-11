@@ -1,6 +1,6 @@
 {
   "name": "agentskillsmd",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Interactive multi-agent skills manager and anti-slop engineering toolkit. Installs modular SKILL.md-based skill packs into supported AI coding agents.",
   "keywords": [
     "ai",
