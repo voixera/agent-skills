@@ -22,7 +22,7 @@ deterministic checks, and transparent validation results.
 - [Supported agents](#supported-agents)
 - [Quick start](#quick-start)
 - [Installation](#installation)
-- [CLI reference](#cli-reference)
+- [Menu reference](#menu-reference)
 - [Skill catalog](#skill-catalog)
 - [Presets](#presets)
 - [SVG Craft Pro](#svg-craft-pro)
@@ -119,12 +119,15 @@ You get a guided TUI: a large logo, then keyboard-driven screens where you
 
 ? What would you like to do?
 ❯ Start installation
+  Verify installed skills
+  Update installed skills
+  Uninstall skills
   Exit
 ```
 
 ### The flow
 
-1. **Welcome** - logo, version, and `Start installation`.
+1. **Welcome / menu** - logo, version, and the actions below.
 2. **Scope** - this project, your user profile, or a custom path (each explained).
 3. **Agents** - multi-select with support level and evidence shown
    (`verified` / `documented`).
@@ -133,7 +136,10 @@ You get a guided TUI: a large logo, then keyboard-driven screens where you
 5. **Preview** - agents, skills, scope, files to create/update, conflicts, and
    dependencies. Nothing is written until you confirm.
 6. **Install** - real progress for real work (resolve, write, manifest, verify).
-7. **Complete** - an accurate report plus how to verify / update / uninstall.
+7. **Complete** - an accurate report, then back to the menu.
+
+Verify, update, and uninstall are also on the main menu - there is nothing to
+type.
 
 **Keys:** `↑`/`↓` navigate, `space` toggles, `a` toggles all, `enter` confirms,
 `esc` goes back, `ctrl+c` quits safely. No mouse required.
@@ -141,23 +147,8 @@ You get a guided TUI: a large logo, then keyboard-driven screens where you
 > **Terminal support.** Built with `@inquirer/prompts`; works in Windows Terminal,
 > PowerShell, CMD, and other ANSI-capable terminals. If no colour is available,
 > output degrades to plain text. In a **non-interactive** shell (piped input) it
-> prints the supported commands instead of hanging.
-
-### Non-interactive (CI / scripts)
-
-Advanced commands exist for automation and never replace the default experience:
-
-```bash
-npx agentskillsmd install -Preset minimal -Agents claude-code -Scope project -Yes
-npx agentskillsmd list -Category svg
-npx agentskillsmd agents
-npx agentskillsmd presets
-npx agentskillsmd validate
-npx agentskillsmd verify
-npx agentskillsmd update
-npx agentskillsmd uninstall -Skills accessibility-a11y
-```
-
+> prints a short notice telling you to run it in a terminal, instead of hanging.
+>
 > **Requirements:** [Node.js](https://nodejs.org) 18+ (for `npx` and the TUI) and
 > **PowerShell** - Windows PowerShell 5.1 (bundled with Windows) or PowerShell 7+
 > on any OS. The TUI is the interface; the installation engine underneath it is
@@ -166,12 +157,10 @@ npx agentskillsmd uninstall -Skills accessibility-a11y
 
 ## Installation
 
-Agent Skills installs through `npx`:
+Agent Skills installs through a single command:
 
 ```bash
-npx agentskillsmd                 # interactive
-npx agentskillsmd list -Category svg
-npx agentskillsmd install -Preset minimal -Agents claude-code -Scope project -Yes
+npx agentskillsmd
 ```
 
 ### Requirements
@@ -202,50 +191,29 @@ Running with no arguments launches the interactive installer. Passing a command
 | `project` | The project directory (default: current) | Commit skills alongside the code. |
 | `user` | Your home configuration for each agent | Apply the same skills everywhere. |
 
-## CLI reference
+## Menu reference
 
-All commands accept `-Path <dir>` to target a project other than the current
-directory, and `-Scope project|user`.
+There are no subcommands. Everything is reached from the main menu after
+`npx agentskillsmd`:
 
-| Command | Description |
+| Menu option | Description |
 | --- | --- |
-| *(none)* | Run the interactive installer. |
-| `list` | List available skills. `-Category <name>` filters. |
-| `search <term>` | Search skills by id, name, or description. |
-| `agents` | List supported agents and their support level. |
-| `presets` | List skill presets. |
-| `install` | Install skills (`-Skills`, `-Preset`, `-Agents`, `-Scope`). |
-| `uninstall` | Remove installed skills (`-Skills`, `-Agents`, or `-All`). |
-| `update` | Re-apply everything the manifest says is installed. |
-| `verify` | Verify installed files against the manifest. |
-| `validate` | Validate the registry and skills; `-Svg -Path <file>` for SVG. |
-| `doctor` | Diagnose the environment and detected agents. |
-| `help` | Show usage. |
+| Start installation | Choose scope, agents, and skills, preview, then install. |
+| Verify installed skills | Check installed files against the manifest. |
+| Update installed skills | Re-apply everything the manifest says is installed. |
+| Uninstall skills | Remove files Agent Skills created (nothing else is touched). |
+| Exit | Quit. |
 
-Common options:
+**Keys**
 
-| Option | Meaning |
+| Key | Action |
 | --- | --- |
-| `-Skills a,b` | Comma-separated skill ids. |
-| `-Agents a,b` | Comma-separated agent ids. |
-| `-Preset <id>` | Use a preset's skill set. |
-| `-Scope project\|user` | Installation scope (default `project`). |
-| `-Path <dir>` | Project directory (default current). |
-| `-Category <name>` | Filter by category (`list` only). |
-| `-Preview` | Show the plan without writing files. |
-| `-Force` | Overwrite untracked files (a backup is taken first). |
-| `-Yes` | Do not prompt for confirmation. |
-| `-No-Dependencies` | Do not pull in skill dependencies. |
-
-### Exit codes
-
-| Code | Meaning |
-| --- | --- |
-| 0 | Success. |
-| 1 | Generic failure (validation error, refused operation). |
-| 2 | Usage error (bad or missing arguments). |
-| 3 | Conflict: an untracked file would be overwritten (rerun with `-Force`). |
-| 4 | Nothing to do / no matching selection. |
+| `↑` / `↓` | Move the selection |
+| `space` | Toggle a checkbox |
+| `a` | Toggle all (multi-select lists) |
+| `enter` | Confirm |
+| `esc` | Go back |
+| `ctrl+c` | Quit safely |
 
 ## Skill catalog
 
@@ -406,19 +374,28 @@ guarantee that an SVG is safe. It can produce false negatives. See
 
 ## Updating and uninstalling
 
+Both are on the **main menu** - run `npx agentskillsmd` and choose the action:
+
+```bash
+npx agentskillsmd
+# -> Verify installed skills
+# -> Update installed skills
+# -> Uninstall skills
+```
+
+Under the hood these call the PowerShell engine. For advanced/automation use you
+can also invoke the engine directly from a checkout:
+
 ```powershell
-# Re-apply from the registry (idempotent)
-.\installer\install.ps1 update -Scope project
-
-# Verify installed files against the manifest
-.\installer\install.ps1 verify -Scope project
-
-# Remove one skill (leaves other skills in a shared file intact)
+.\installer\install.ps1 update   -Scope project
+.\installer\install.ps1 verify   -Scope project
 .\installer\install.ps1 uninstall -Skills accessibility-a11y -Scope project
-
-# Remove everything for a scope
 .\installer\install.ps1 uninstall -All -Scope project
 ```
+
+Uninstall only removes files Agent Skills created (recorded in the manifest). For
+shared instruction files it removes only its own managed block, preserving the
+rest of the file.
 
 ## Repository layout
 

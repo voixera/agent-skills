@@ -21,7 +21,8 @@ const root = path.resolve(__dirname, '..');
 const bin = path.join(root, 'bin', 'agentskillsmd.js');
 
 test('banner and description render', () => {
-  const r = spawnSync(process.execPath, [bin, 'help'], {
+  // No subcommands exist, so a non-TTY run prints the banner + notice.
+  const r = spawnSync(process.execPath, [bin], {
     encoding: 'utf8',
     env: { ...process.env, AGENT_SKILLS_NO_COLOR: '1' },
   });
@@ -39,7 +40,7 @@ test('non-TTY is detected and does not launch the interactive TUI', () => {
     timeout: 30000,
   });
   assert.strictEqual(r.status, 0);
-  assert.match(r.stdout, /non-interactive shell/);
+  assert.match(r.stdout, /needs an interactive terminal/i);
   // It must NOT have blocked waiting for input.
 });
 

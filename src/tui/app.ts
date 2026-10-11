@@ -16,6 +16,7 @@ import { skillsScreen } from './screens/skills';
 import { previewScreen } from './screens/preview';
 import { progressScreen } from './screens/progress';
 import { completeScreen } from './screens/complete';
+import { verifyScreen, updateScreen, uninstallScreen } from './screens/manage';
 import { installedSkillIds, readManifest } from '../core/manifest';
 
 export interface AppState {
@@ -54,6 +55,18 @@ export async function runApp(): Promise<number> {
 async function runFlow(state: AppState): Promise<{ action: 'menu' | 'quit' | 'exit'; exitCode: number }> {
   const start = await welcomeScreen(state.registry);
   if (start === 'quit') return { action: 'quit', exitCode: 0 };
+  if (start === 'verify') {
+    await verifyScreen(state.registry);
+    return { action: 'menu', exitCode: 0 };
+  }
+  if (start === 'update') {
+    await updateScreen(state.registry);
+    return { action: 'menu', exitCode: 0 };
+  }
+  if (start === 'uninstall') {
+    await uninstallScreen(state.registry);
+    return { action: 'menu', exitCode: 0 };
+  }
 
   const scope = await scopeScreen(state.registry);
   if (scope === 'back') return { action: 'menu', exitCode: 0 };

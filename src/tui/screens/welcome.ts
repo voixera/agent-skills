@@ -1,27 +1,45 @@
 /**
- * SCREEN A - Welcome.
+ * SCREEN A - Welcome / main menu.
  *
- * Logo, description, version, and a Start option. No command typing required.
+ * Logo, description, version, and the primary actions. No command typing
+ * required: everything is reachable from here.
  */
 
 import { select } from '@inquirer/prompts';
 import type { Registry } from '../../types';
-import { banner, hintBar, KEY_HINTS, paint } from '../components/theme';
+import { banner, paint } from '../components/theme';
 
-export async function welcomeScreen(registry: Registry): Promise<'start' | 'quit'> {
+export type MainAction = 'install' | 'verify' | 'update' | 'uninstall' | 'quit';
+
+export async function welcomeScreen(registry: Registry): Promise<MainAction> {
   process.stdout.write(banner());
 
   const stats = `${registry.skills.skills.length} skills  \u2022  ${registry.agents.agents.length} agents  \u2022  ${registry.presets.presets.length} presets`;
   process.stdout.write(`  ${paint(stats, 'dim')}\n\n`);
 
-  const choice = await select({
+  const choice = await select<MainAction>({
     message: 'What would you like to do?',
     loop: false,
     choices: [
-      { name: 'Start installation', value: 'start' as const },
-      { name: 'Exit', value: 'quit' as const },
+      { name: 'Start installation', value: 'install' },
+      { name: 'Verify installed skills', value: 'verify' },
+      { name: 'Update installed skills', value: 'update' },
+      { name: 'Uninstall skills', value: 'uninstall' },
+      { name: 'Exit', value: 'quit' },
     ],
   });
 
+  return choice;
+}
+
+export async function postActionMenu(): Promise<'menu' | 'quit'> {
+  const choice = await select<'menu' | 'quit'>({
+    message: 'What next?',
+    loop: false,
+    choices: [
+      { name: 'Back to main menu', value: 'menu' },
+      { name: 'Exit', value: 'quit' },
+    ],
+  });
   return choice;
 }

@@ -52,9 +52,7 @@ export async function completeScreen(
   }
 
   process.stdout.write(`\n  ${paint('Next steps', 'brand')}\n`);
-  process.stdout.write(`    Verify   : npx agentskillsmd verify\n`);
-  process.stdout.write(`    Update   : npx agentskillsmd update\n`);
-  process.stdout.write(`    Uninstall: npx agentskillsmd uninstall\n`);
+  process.stdout.write(`    Re-run ${paint('npx agentskillsmd', 'brand')} to verify, update, or uninstall.\n`);
 
   process.stdout.write('\n');
   const next = await select({

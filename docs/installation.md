@@ -22,27 +22,23 @@ The toolkit targets PowerShell **5.1** and is tested on
 npx agentskillsmd
 ```
 
-Or non-interactively:
+This launches the interactive TUI immediately. There are no subcommands.
 
-```bash
-npx agentskillsmd install -Preset svg-specialist -Agents codex,claude-code -Scope project -Yes
-```
+The npm package runs a small **Node.js/TypeScript** program that:
 
-The npm package is a **thin launcher** (`bin/agent-skills.js`). It:
+1. Renders the interactive TUI and, when you confirm, invokes the install engine.
+2. Locates PowerShell on `PATH` (`powershell.exe`/`pwsh` on Windows, `pwsh` on
+   macOS/Linux) to run that engine.
+3. Prints a short notice and exits if the shell is not an interactive terminal.
 
-1. Locates PowerShell on `PATH` (`powershell.exe`/`pwsh` on Windows, `pwsh` on
-   macOS/Linux).
-2. Runs `installer/install.ps1` from the package directory, forwarding your
-   arguments and the exit code.
+The TUI does not write files itself; the **PowerShell module is the single
+installation engine**. Two consequences worth knowing:
 
-It is **not** a reimplementation — all logic stays in the PowerShell module. Two
-consequences worth knowing:
-
-- **PowerShell is required.** Without it, `npx agentskillsmd` prints a clear error
-  and exits non-zero; it does not fake success. On Windows, PowerShell 5.1 is
-  already installed. On macOS/Linux, install PowerShell 7+.
-- **Running with no arguments prints help** rather than opening an interactive
-  menu, because `npx` is often used in non-interactive shells.
+- **PowerShell is required.** Without it, the TUI reports a clear error; it does
+  not fake success. On Windows, PowerShell 5.1 is already installed. On
+  macOS/Linux, install PowerShell 7+.
+- **A terminal is required.** In a non-interactive shell (piped input) the
+  program prints a notice instead of hanging.
 
 > Compatibility note: `npx` is verified on Windows in the authoring environment.
 > macOS/Linux with `pwsh` is expected to work but is **untested** here.

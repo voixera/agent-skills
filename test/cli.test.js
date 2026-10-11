@@ -1,5 +1,10 @@
 /**
  * CLI configuration and non-TTY behaviour tests.
+ *
+ * The CLI is TUI-only: no subcommands. These tests verify that package wiring is
+ * correct, that a non-TTY shell gets a clear message (and does not hang), and
+ * that the underlying engine (used by the TUI) installs, verifies, and
+ * uninstalls correctly.
  */
 
 const test = require('node:test');
@@ -28,64 +33,40 @@ test('package.json maps the bin to the executable', () => {
   assert.ok(pkg.files.includes('installer/'), 'installer engine must be published');
 });
 
-test('default invocation in a non-TTY prints help, does not hang', () => {
+test('default invocation in a non-TTY prints a notice, does not hang', () => {
   const r = runCli([]);
   assert.strictEqual(r.status, 0);
-  assert.match(r.stdout, /non-interactive shell/);
-  assert.match(r.stdout, /npx agentskillsmd install/);
+  assert.match(r.stdout, /needs an interactive terminal/i);
+  assert.match(r.stdout, /npx agentskillsmd/);
 });
 
-test('help lists the interactive default and commands', () => {
-  const r = runCli(['help']);
-  assert.strictEqual(r.status, 0);
-  assert.match(r.stdout, /Interactive installer \(TUI\)/);
-});
-
-test('validate exits 0 on a valid registry', () => {
-  const r = runCli(['validate']);
-  assert.strictEqual(r.status, 0);
-  assert.match(r.stdout, /PASS registry valid/);
-});
-
-test('list exits 0', () => {
+test('no subcommands: arguments never bypass the TUI', () => {
+  // Any argument still routes to the TUI / non-TTY notice; there is no command
+  // dispatch. We assert we do not, for example, run an "install" command.
   const r = runCli(['list', '-Category', 'svg']);
   assert.strictEqual(r.status, 0);
-  assert.match(r.stdout, /svg-craft/);
+  assert.match(r.stdout, /needs an interactive terminal/i);
 });
 
-test('agents exits 0 and shows evidence levels', () => {
-  const r = runCli(['agents']);
-  assert.strictEqual(r.status, 0);
-  assert.match(r.stdout, /verified/);
-  assert.match(r.stdout, /documented/);
-});
-
-test('unknown command falls through to non-TTY help (no crash)', () => {
-  const r = runCli(['frobnicate']);
-  assert.strictEqual(r.status, 0);
-  assert.match(r.stdout, /non-interactive shell/);
-});
-
-test('non-interactive install then verify', () => {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'agentskills-cli-'));
+test('engine install -> verify -> uninstall (as the TUI uses it)', () => {
+  const { executeInstall, verifyInstallation, uninstall } = require('../dist/core/installer');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'agentskills-engine-'));
   try {
-    const install = runCli([
-      'install',
-      '-Skills', 'svg-craft',
-      '-Agents', 'codex',
-      '-Scope', 'project',
-      '-Path', tmp,
-      '-Yes',
-    ]);
-    assert.strictEqual(install.status, 0, install.stdout + install.stderr);
+    const install = executeInstall({
+      projectRoot: tmp,
+      scope: 'project',
+      agentIds: ['codex'],
+      skillIds: ['svg-craft'],
+    });
+    assert.strictEqual(install.exitCode, 0, install.stdout + install.stderr);
     assert.ok(fs.existsSync(path.join(tmp, '.codex', 'skills', 'svg-craft', 'SKILL.md')));
 
-    const verify = runCli(['verify', '-Scope', 'project', '-Path', tmp]);
-    assert.strictEqual(verify.status, 0, verify.stdout + verify.stderr);
-    assert.match(verify.stdout, /PASS/);
+    const verify = verifyInstallation(tmp, 'project');
+    assert.strictEqual(verify.exitCode, 0, 'verify should pass');
+    assert.ok(verify.results.some((r) => r.status === 'PASS'));
 
-    const uninstall = runCli(['uninstall', '-Skills', 'svg-craft', '-Scope', 'project', '-Path', tmp]);
-    assert.strictEqual(uninstall.status, 0, uninstall.stdout + uninstall.stderr);
+    const rm = uninstall(tmp, 'project', ['svg-craft'], []);
+    assert.strictEqual(rm.exitCode, 0, rm.stdout + rm.stderr);
     assert.ok(!fs.existsSync(path.join(tmp, '.codex', 'skills', 'svg-craft', 'SKILL.md')));
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });

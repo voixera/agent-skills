@@ -93,8 +93,8 @@ jobs:
       - name: Test (Node)
         run: node --test --test-reporter=spec --test-timeout=120000 test/
 
-      - name: Verify the CLI launches (non-TTY path)
-        run: node bin/agentskillsmd.js validate
+      - name: Verify the CLI runs in a non-TTY environment
+        run: node bin/agentskillsmd.js
 
   secret-scan:
     name: Secret scan
