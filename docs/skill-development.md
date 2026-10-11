@@ -92,16 +92,15 @@ referenced skill id must exist; unknown references are a hard error at load time
 See [supported-agents.md](supported-agents.md). Add an entry to
 `registry/agents.json` with the correct `format`. If the format is one of the
 existing five, no code is required. If it is genuinely new, add a renderer to
-`src/AgentSkills/Private/AdapterEngine.ps1` and a fixture under
-`adapters/_fixtures/`.
+`src/core/adapters.ts` and a fixture under `adapters/_fixtures/`.
 
 ## Before opening a pull request
 
 Run both checks and make sure they pass:
 
-```powershell
-.\installer\install.ps1 validate
-.\tests\run-tests.ps1
+```bash
+npm run validate
+npm test
 ```
 
 Checklist:

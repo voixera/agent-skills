@@ -37,8 +37,19 @@ export const LOGO = String.raw`
       /___/
 `.replace(/^\n/, '');
 
+export function toolVersion(): string {
+  try {
+    // theme.js lives at dist/tui/components/, so the package root is ../../../.
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const pkg = require('../../../package.json') as { version: string };
+    return pkg.version;
+  } catch {
+    return '0.0.0';
+  }
+}
+
 export function banner(): string {
-  const version = 'v1.1.0';
+  const version = `v${toolVersion()}`;
   const lines = LOGO.split('\n').filter((l) => l.length > 0);
   const out: string[] = [''];
   for (const l of lines) out.push(paint(l, 'brand'));

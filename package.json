@@ -1,6 +1,6 @@
 {
   "name": "agentskillsmd",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Interactive multi-agent skills manager and anti-slop engineering toolkit. Installs modular SKILL.md-based skill packs into supported AI coding agents.",
   "keywords": [
     "ai",
@@ -33,8 +33,6 @@
   "files": [
     "bin/",
     "dist/",
-    "installer/",
-    "src/AgentSkills/",
     "registry/",
     "skills/",
     "adapters/",
@@ -56,8 +54,7 @@
     "prepare": "npm run build",
     "start": "node bin/agentskillsmd.js",
     "test": "node --test --test-concurrency=1 --test-timeout=180000 test",
-    "test:ps": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1",
-    "validate": "powershell -NoProfile -ExecutionPolicy Bypass -File installer/install.ps1 validate",
+    "validate": "node -e \"require('./dist/core/registry').loadAndValidateRegistry(); console.log('registry valid')\"",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

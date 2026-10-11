@@ -12,68 +12,8 @@ permissions:
   contents: read
 
 jobs:
-  validate:
-    name: Validate registry and skills
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Validate registry and skills
-        shell: powershell
-        run: |
-          $ErrorActionPreference = 'Stop'
-          .\installer\install.ps1 validate
-
-  test:
-    name: Run test suite
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Run tests
-        shell: powershell
-        run: |
-          $ErrorActionPreference = 'Stop'
-          .\tests\run-tests.ps1
-
-  lint:
-    name: Lint PowerShell and markdown
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Analyze PowerShell
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          # Non-interactive module install: set PSGallery trusted and never
-          # prompt. -Confirm:$false and -Force avoid the NuGet provider prompt.
-          $ProgressPreference = 'SilentlyContinue'
-          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted -ErrorAction SilentlyContinue
-          Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force -AllowClobber -Confirm:$false
-          Import-Module PSScriptAnalyzer
-
-          # Invoke-ScriptAnalyzer's -Path binds a single path per call.
-          $issues = @()
-          foreach ($dir in @('src', 'installer', 'tests')) {
-            $issues += Invoke-ScriptAnalyzer -Path $dir -Severity Error
-          }
-          if ($issues.Count -gt 0) {
-            $issues | Format-Table RuleName, ScriptName, Line, Message -AutoSize
-            throw "PSScriptAnalyzer found $($issues.Count) error-level issue(s)."
-          }
-          Write-Host "PSScriptAnalyzer: no error-level issues."
-
-      - name: Lint markdown
-        shell: bash
-        run: |
-          npx --yes markdownlint-cli@0.42.0 "**/*.md" --config .markdownlint.json --ignore node_modules
-
   node:
-    name: Build and test the Node TUI
+    name: Build and test the TUI
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -107,9 +47,25 @@ jobs:
           echo "----- end test output (exit $code) -----"
           exit $code
 
+      - name: Validate registry
+        shell: bash
+        run: npm run validate
+
       - name: Verify the CLI runs in a non-TTY environment
         shell: bash
         run: node bin/agentskillsmd.js
+
+  lint:
+    name: Lint markdown
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Lint markdown
+        shell: bash
+        run: |
+          npx --yes markdownlint-cli@0.42.0 "**/*.md" --config .markdownlint.json --ignore node_modules
 
   secret-scan:
     name: Secret scan

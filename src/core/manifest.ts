@@ -1,13 +1,13 @@
 /**
- * Manifest reading (core).
+ * Manifest reading and writing (core).
  *
- * The installer engine (PowerShell) writes the manifest. The TUI reads it to
- * show what is installed and to verify. This module never writes the manifest;
- * it is owned by the engine.
+ * The engine writes the manifest; the TUI reads it to show what is installed
+ * and to verify. Recorded paths are the only files uninstall will ever remove.
  */
 
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import * as crypto from 'node:crypto';
 import type { Scope } from '../types';
 
 export const MANIFEST_FILENAME = '.agent-skills-manifest.json';
@@ -73,3 +73,30 @@ export function installedSkillIds(manifest: Manifest): string[] {
   }
   return [...ids];
 }
+
+// ---------------------------------------------------------------------------
+// Writing helpers (used by the engine)
+// ---------------------------------------------------------------------------
+
+export function backupRoot(projectRoot: string, scope: Scope): string {
+  return path.join(manifestRoot(projectRoot, scope), 'backups');
+}
+
+export function writeManifest(projectRoot: string, scope: Scope, manifest: Manifest): string {
+  const file = manifestPath(projectRoot, scope);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  manifest.updated = new Date().toISOString();
+  fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
+  return file;
+}
+
+/** Normalised content hash (LF line endings) so CRLF/LF does not read as drift. */
+export function contentHash(text: string): string {
+  const normalised = text.replace(/\r\n/g, '\n');
+  return crypto.createHash('sha256').update(normalised, 'utf8').digest('hex');
+}
+
+export function fileContentHash(file: string): string {
+  return contentHash(fs.readFileSync(file, 'utf8'));
+}
+

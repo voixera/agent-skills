@@ -58,9 +58,9 @@ New agents that share an existing format need **no new code** — add an entry t
 
 ## Detection
 
-`install.ps1 doctor` probes each agent's `detect` markers in the current project
-(for example `.codex`, `.claude`, `.cursor`). Detection is advisory: it never
-writes anything and a missing marker simply reports `SKIP`.
+The installer probes each agent's `detect` markers in the current project (for
+example `.codex`, `.claude`, `.cursor`). Detection is advisory: it never writes
+anything and a missing marker simply skips the agent.
 
 ## Verifying an adapter yourself
 
@@ -68,12 +68,14 @@ Each adapter directory contains a `README.md` with the rationale and a
 `adapters/_fixtures/` example showing the exact output shape. To generate output
 for a skill:
 
-```powershell
-Import-Module .\src\AgentSkills\AgentSkills.psd1
-$skill   = Get-AgentSkillsById -Id 'icon-design'
-$agent   = Get-AgentDefinitionById -Id 'cursor'
-$content = Get-AgentSkillsSkillContent -Skill $skill
-ConvertTo-AgentSkillsRenderedContent -SkillContent $content -Agent $agent
+```js
+const { loadAndValidateRegistry, getSkill, readSkillContent } = require('agentskillsmd/dist/core/core');
+const { renderForAgent } = require('agentskillsmd/dist/core/adapters');
+
+const reg = loadAndValidateRegistry();
+const skill = getSkill(reg, 'icon-design');
+const agent = reg.agents.agents.find((a) => a.id === 'cursor');
+console.log(renderForAgent(readSkillContent(skill), agent));
 ```
 
 Then compare the output to the real file the agent reads.

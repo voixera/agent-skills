@@ -50,24 +50,25 @@ export async function verifyScreen(_registry: Registry): Promise<'menu' | 'quit'
   return 'menu';
 }
 
-export async function updateScreen(_registry: Registry): Promise<'menu' | 'quit'> {
+export async function updateScreen(registry: Registry): Promise<'menu' | 'quit'> {
   process.stdout.write(section('Update installed skills', 'Re-apply from the registry.'));
 
   const target = await pickScope();
   if (target === 'back') return 'menu';
 
-  const result = updateInstalled(target.projectRoot, target.scope);
+  const result = updateInstalled(registry, target.projectRoot, target.scope);
   process.stdout.write('\n');
   if (!result) {
     process.stdout.write(`  ${paint('Nothing installed for this scope.', 'dim')}\n\n`);
     return 'menu';
   }
-  process.stdout.write(result.stdout || `  ${paint('Update complete.', 'ok')}\n`);
-  process.stdout.write('\n');
+  process.stdout.write(
+    `  ${paint(`${result.created} created, ${result.updated} updated, ${result.skipped} unchanged.`, 'ok')}\n\n`
+  );
   return 'menu';
 }
 
-export async function uninstallScreen(_registry: Registry): Promise<'menu' | 'quit'> {
+export async function uninstallScreen(registry: Registry): Promise<'menu' | 'quit'> {
   process.stdout.write(section('Uninstall skills', 'Remove only files Agent Skills created.'));
 
   const target = await pickScope();
@@ -98,13 +99,12 @@ export async function uninstallScreen(_registry: Registry): Promise<'menu' | 'qu
 
   if (choice === '__back__') return 'menu';
 
-  const skillIds = choice === '__all__' ? [] : [choice as string];
-  const result = choice === '__all__'
-    ? uninstall(target.projectRoot, target.scope, [], [])
-    : uninstall(target.projectRoot, target.scope, skillIds, []);
+  const all = choice === '__all__';
+  const skillIds = all ? [] : [choice as string];
+  const result = uninstall(registry, target.projectRoot, target.scope, skillIds, []);
 
   process.stdout.write('\n');
-  process.stdout.write(result.stdout || `  ${paint('Uninstall complete.', 'ok')}\n`);
-  process.stdout.write('\n');
+  const removed = result.results.filter((r) => r.status === 'PASS').length;
+  process.stdout.write(`  ${paint(`Removed ${removed} item(s).`, 'ok')}\n\n`);
   return 'menu';
 }

@@ -107,11 +107,19 @@ You get a guided TUI: a large logo, then keyboard-driven screens where you
 *choose* agents and skill packs.
 
 ```text
-   ___                    __     _____ __ __ _ __
-  / _ | ___ ____ ___  ___ / /_   / ___// //_// //_/
- / __ |/ _`/ -_) _ \/ -_) __/  _\__ \/ ,<  / ,<
-/_/ |_/\_, /\__/_//_/\__/\__/  /____//_/|_|/_/|_|
-      /___/
+                                       ___                   ___                ___   ___              
+                                      (   )                 (   )         .-.  (   ) (   )             
+  .---.    .--.     .--.    ___ .-.    | |_         .--.     | |   ___   ( __)  | |   | |      .--.    
+ / .-, \  /    \   /    \  (   )   \  (   __)     /  _  \    | |  (   )  (''")  | |   | |    /  _  \   
+(__) ; | ;  ,-. ' |  .-. ;  |  .-. .   | |       . .' `. ;   | |  ' /     | |   | |   | |   . .' `. ;  
+  .'`  | | |  | | |  | | |  | |  | |   | | ___   | '   | |   | |,' /      | |   | |   | |   | '   | |  
+ / .'| | | |  | | |  |/  |  | |  | |   | |(   )  _\_`.(___)  | .  '.      | |   | |   | |   _\_`.(___) 
+| /  | | | |  | | |  ' _.'  | |  | |   | | | |  (   ). '.    | | `. \     | |   | |   | |  (   ). '.   
+; |  ; | | '  | | |  .'.-.  | |  | |   | ' | |   | |  `\ |   | |   \ \    | |   | |   | |   | |  `\ |  
+' `-'  | '  `-' | '  `-' /  | |  | |   ' `-' ;   ; '._,' '   | |    \ .   | |   | |   | |   ; '._,' '  
+`.__.'_.  `.__. |  `.__.'  (___)(___)   `.__.     '.___.'   (___ ) (___) (___) (___) (___)   '.___.'   
+          ( `-' ;                                                                                      
+           `.__.                                                                                       
 
   AGENT SKILLS  v1.1.0
   Multi-agent skills manager and anti-slop engineering toolkit.
@@ -149,11 +157,8 @@ type.
 > output degrades to plain text. In a **non-interactive** shell (piped input) it
 > prints a short notice telling you to run it in a terminal, instead of hanging.
 >
-> **Requirements:** [Node.js](https://nodejs.org) 18+ (for `npx` and the TUI) and
-> **PowerShell** - Windows PowerShell 5.1 (bundled with Windows) or PowerShell 7+
-> on any OS. The TUI is the interface; the installation engine underneath it is
-> PowerShell. If PowerShell is missing, the TUI reports a clear error instead of
-> pretending to work. See [docs/installation.md](docs/installation.md#npx).
+> **Requirements:** [Node.js](https://nodejs.org) 18+. That is the only
+> requirement - there is no PowerShell or other runtime dependency.
 
 ## Installation
 
@@ -165,24 +170,21 @@ npx agentskillsmd
 
 ### Requirements
 
-- **Node.js 16+** - provides the `npx` command.
-- **PowerShell** - Windows PowerShell 5.1 (included in Windows 10/11) or
-  PowerShell 7+ on macOS/Linux.
+- **Node.js 18+** - provides the `npx` command and runs the TUI.
 - No administrator rights are required for **project**-scope installs.
 
 ### What the launcher does
 
-`npx agentskillsmd` runs a small Node.js/TypeScript program. It renders the TUI
-and calls the **PowerShell installation engine** to do the actual file writes.
-The two are deliberately separate:
+`npx agentskillsmd` runs a single Node.js/TypeScript program. It renders the TUI
+and performs the installation in-process - there is no external engine:
 
-- The **TUI** (`src/tui`, `src/cli`) never writes files; it reads the registry,
-  builds a dry-run plan, and shows it.
-- The **engine** (`src/AgentSkills`, `installer/install.ps1`) is the single
-  source of install truth. It writes files, the manifest, and the backups.
+- The **TUI** (`src/tui`, `src/cli`) drives the screens and collects your choices.
+- The **core** (`src/core`) reads the registry, builds a dry-run plan, writes the
+  skill files and manifest, makes backups, and verifies. It never touches files it
+  did not create.
 
-Running with no arguments launches the interactive installer. Passing a command
-(`list`, `install`, ...) uses the non-interactive path.
+Running with no arguments launches the interactive installer. There are no
+subcommands.
 
 ### Scopes
 
@@ -330,11 +332,13 @@ It is a set of eight skills (`svg-craft`, `custom-illustration`, `icon-design`,
 5. **Visual review** — *never* performed automatically; always reported as not
    done.
 
-An SVG is **not** "validated" just because it parses. See
+An SVG is **not** "validated" just because it parses. The validator is available
+from the package API (`validateSvgFile` / `validateSvgText`). See
 [docs/svg-quality.md](docs/svg-quality.md).
 
-```powershell
-.\installer\install.ps1 validate -Svg -Path .\art\logo.svg
+```js
+const { validateSvgFile } = require('agentskillsmd/dist/core/core');
+console.log(validateSvgFile('./art/logo.svg', { render: true }));
 ```
 
 ## Quality checker
@@ -352,8 +356,11 @@ Available checks include: registry schema validation, skill metadata validation,
 duplicate ids, missing files, broken references, dependency-cycle detection,
 preset resolution, adapter/format compatibility, and the SVG pipeline.
 
-```powershell
-.\installer\install.ps1 validate
+The registry is validated automatically when the TUI starts, and can be checked
+from the command line:
+
+```bash
+npm run validate
 ```
 
 ## Security model
@@ -383,19 +390,9 @@ npx agentskillsmd
 # -> Uninstall skills
 ```
 
-Under the hood these call the PowerShell engine. For advanced/automation use you
-can also invoke the engine directly from a checkout:
-
-```powershell
-.\installer\install.ps1 update   -Scope project
-.\installer\install.ps1 verify   -Scope project
-.\installer\install.ps1 uninstall -Skills accessibility-a11y -Scope project
-.\installer\install.ps1 uninstall -All -Scope project
-```
-
-Uninstall only removes files Agent Skills created (recorded in the manifest). For
-shared instruction files it removes only its own managed block, preserving the
-rest of the file.
+Under the hood these run the in-process TypeScript engine. Uninstall only removes
+files Agent Skills created (recorded in the manifest). For shared instruction
+files it removes only its own managed block, preserving the rest of the file.
 
 ## Repository layout
 
@@ -404,17 +401,15 @@ agent-skills/
 |-- README.md, LICENSE, CONTRIBUTING.md, SECURITY.md, CHANGELOG.md, package.json
 |-- bin/                 agentskillsmd.js (npm executable)
 |-- src/
-|   |-- cli/             entry point + advanced commands
+|   |-- cli/             entry point (launches the TUI)
 |   |-- tui/             TUI app, screens, components
-|   |-- core/            registry, resolver, planner, installer bridge, manifest
-|   |-- types/           shared TypeScript types
-|   \-- AgentSkills/      the PowerShell module (install engine)
-|-- installer/           install.ps1 (engine entry) + install.cmd + bootstrap.ps1
+|   |-- core/            registry, resolver, planner, engine, adapters, manifest
+|   |-- validators/      SVG validator
+|   \-- types/           shared TypeScript types
 |-- registry/            agents.json, skills.json, presets.json + schema/
 |-- skills/              canonical SKILL.md packs by category
 |-- adapters/            per-agent adapter documentation + fixtures
 |-- test/                Node tests (node:test)
-|-- tests/               PowerShell tests (unit/ integration/ fixtures/)
 |-- docs/                installation, supported-agents, skill-development, assets/ ...
 \-- .github/             workflows, issue templates, PR template
 ```
@@ -424,21 +419,18 @@ agent-skills/
 See [CONTRIBUTING.md](CONTRIBUTING.md) and
 [docs/skill-development.md](docs/skill-development.md). In short: add a
 `SKILL.md` under `skills/<category>/<id>/`, register it in
-`registry/skills.json`, run `.\installer\install.ps1 validate` and
-`.\tests\run-tests.ps1`, and open a pull request.
+`registry/skills.json`, run `npm run validate` and `npm test`, and open a pull
+request.
 
 ## Troubleshooting
 
-See [docs/troubleshooting.md](docs/troubleshooting.md). Quick checks:
+See [docs/troubleshooting.md](docs/troubleshooting.md). Quick check:
 
-```powershell
-.\installer\install.ps1 doctor
-.\installer\install.ps1 validate
+```bash
+npm run validate
 ```
 
 ## Testing
-
-Node (TUI + core):
 
 ```bash
 npm install
@@ -446,38 +438,25 @@ npm run build
 npm test
 ```
 
-PowerShell (engine):
-
-```powershell
-.\tests\run-tests.ps1                 # all tests
-.\tests\run-tests.ps1 -Suite unit     # unit only
-.\tests\run-tests.ps1 -Suite integration
-```
-
-All tests use isolated temporary directories and never touch the real user
-profile. Pester is not required.
+Tests use isolated temporary directories and never touch the real user profile.
 
 ## Known limitations
 
-- The installer is **Windows/PowerShell-first**. The module is plain PowerShell
-  and should run on PowerShell 7 on any OS, but non-Windows is **untested** here.
 - Only the **Codex** and **Claude Code** adapters are `verified`. All others are
   `documented` from vendor docs and may drift with agent versions.
 - The **SVG security scan is pattern-based** and is not a security guarantee.
-- **Rendering** requires an external renderer; without one, rendering is skipped.
-- Windows PowerShell 5.1 limitation: JSON is parsed with `ConvertFrom-Json`, and
-  very large registries would be slower than on PowerShell 7 with `-AsHashtable`.
-- The `npx` route requires PowerShell to be present; it is verified on Windows and
-  **untested** on macOS/Linux (expected to work with `pwsh`).
+- **SVG rendering** requires an external renderer; the validation pipeline reports
+  it as `SKIP` when none is present.
+- The TUI requires an interactive terminal. In a non-TTY shell it prints a notice
+  and exits rather than hanging.
 
 ## Roadmap
 
 - Additional verified adapters as they can be tested against real installs.
-- Optional `Pester`-based test entry point alongside the built-in harness.
-- macOS/Linux verification of the `npx` route with PowerShell 7.
+- macOS/Linux verification of the TUI.
+- More SVG validation (viewBox clipping detection, node-count heuristics).
 - A `search --remote` path is **not** planned until there is a signed registry;
   offline correctness is preferred.
-- More SVG validation (viewBox clipping detection, node-count heuristics).
 
 ## License
 

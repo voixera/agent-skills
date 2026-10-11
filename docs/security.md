@@ -27,9 +27,8 @@ Out of scope:
 
 Every write is checked against the selected scope root. A destination that
 escapes the scope (for example via `..`) is refused with a `FAIL`. This is
-enforced by `Test-AgentSkillsPathInsideRoot` in
-`src/AgentSkills/Private/FileOps.ps1` and covered by tests in
-`tests/unit/PathSafety.Tests.ps1`.
+enforced by `isInside` in `src/core/engine.ts` and `src/core/planner.ts`, and
+covered by tests in `test/engine.test.js`.
 
 ### No silent overwrites
 

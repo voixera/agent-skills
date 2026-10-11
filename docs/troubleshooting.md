@@ -2,73 +2,67 @@
 
 Start here:
 
-```powershell
-.\installer\install.ps1 doctor
-.\installer\install.ps1 validate
+```bash
+npm run validate
 ```
 
-## "install.ps1 cannot be loaded because running scripts is disabled"
+Then run `npx agentskillsmd` and try again.
 
-Your execution policy blocks scripts. Options:
+## "Agent Skills needs an interactive terminal"
 
-```powershell
-# Per-process (no system change) — this is what install.cmd uses:
-powershell -NoProfile -ExecutionPolicy Bypass -File .\installer\install.ps1 list
+You ran the command in a shell without a TTY (piped input, some CI runners, or an
+IDE task). Open Windows Terminal, PowerShell, CMD, or another terminal and run:
 
-# Or unblock a downloaded file:
-Unblock-File .\installer\install.ps1
+```bash
+npx agentskillsmd
 ```
 
-See [installation.md](installation.md) for more.
+## The command hangs
 
-## "Cannot find the Agent Skills module"
+It should not. In a non-interactive shell it prints the notice above and exits.
+If it hangs, your terminal may not be passing key input; try a different terminal.
 
-The entry point expects the module at `src/AgentSkills/AgentSkills.psd1`
-relative to the repository root. This happens if `install.ps1` was moved without
-`src/`. Restore the repository layout, or set the root explicitly:
+## `npx` cannot find the package
 
-```powershell
-$env:AGENT_SKILLS_ROOT = 'C:\path\to\agent-skills'
+Make sure you are online and the package name is correct:
+
+```bash
+npx agentskillsmd
 ```
 
-## Exit code 3, "Existing untracked file"
+If the registry does not have it yet (the package may not be published), run from
+a checkout instead:
+
+```bash
+npm install
+npm run build
+node bin/agentskillsmd.js
+```
+
+## A conflict is reported (`Existing untracked file`)
 
 The destination exists but was not created by Agent Skills, so overwriting it was
-refused. Review the plan first, then decide:
+refused. Review the preview, then choose **Install and overwrite conflicting
+files** on the preview screen (a backup is written to `.agent-skills/backups/`
+before anything is replaced).
 
-```powershell
-.\installer\install.ps1 install -Skills <id> -Agents <agent> -Preview
-.\installer\install.ps1 install -Skills <id> -Agents <agent> -Yes -Force
-```
+## Nothing was installed
 
-`-Force` writes a backup to `.agent-skills/backups/` before overwriting.
-
-## Nothing was installed (exit code 4)
-
-The selection matched nothing. Check the ids:
-
-```powershell
-.\installer\install.ps1 list
-.\installer\install.ps1 search <term>
-```
-
-Also check the agent supports the scope you chose — unsupported combinations are
-skipped with a `WARN`.
+The selection matched nothing, or an agent does not support the chosen scope.
+Re-run and check that at least one agent and one skill are selected; unsupported
+combinations are shown as notes on the preview screen and skipped.
 
 ## A skill was skipped for an agent
 
-The skill does not list that agent as supported, or the agent does not support
-the chosen scope. The plan prints a `WARN` explaining which. Use a supported
-combination or an agent whose support level fits the skill.
+The skill does not list that agent as supported, or the agent does not support the
+chosen scope. The preview screen shows a note explaining which. Pick a supported
+combination.
 
-## "verify" shows WARN "modified since install"
+## Verify shows `WARN` "modified since install"
 
-You (or an agent) edited an installed file after installation. This is expected
-if you customized a skill. To reset it to the registry version:
-
-```powershell
-.\installer\install.ps1 update -Scope project -Force
-```
+You (or an agent) edited an installed file after installation. This is expected if
+you customised a skill. To reset it to the registry version, run `npx
+agentskillsmd` and choose **Update installed skills**.
 
 ## My `GEMINI.md` / `AGENTS.md` content was changed
 
@@ -79,50 +73,44 @@ The installer writes and updates only the block between:
 <!-- agent-skills:end -->
 ```
 
-If content inside the markers was hand-edited, it will be regenerated on the next
+If content inside the markers was hand-edited, it is regenerated on the next
 install/update. Keep your own content outside the markers.
 
-## SVG validate says SKIP for render / visual review
+## SVG validation says `SKIP` for render / visual review
 
-- `svg:render` is `SKIP` unless you pass `-Render` **and** a renderer is on
-  `PATH`. Install `rsvg-convert`, Inkscape, or ImageMagick to enable it.
-- `svg:visual-review` is **always** `SKIP`. It is a human/AI judgement step and
-  is never performed automatically. This is intentional.
+- `svg:render` is `SKIP` unless you request rendering and a renderer is on `PATH`.
+- `svg:visual-review` is **always** `SKIP`: it is a human/AI judgement step and is
+  never performed automatically. This is intentional.
 
-## "validate" fails on the registry
+## The registry fails to validate
 
 Run it to see the specific failures:
 
-```powershell
-.\installer\install.ps1 validate
+```bash
+npm run validate
 ```
 
 Common causes: a skill id that does not match its directory name, a file missing
 from `skills/`, a preset referencing an unknown skill id, or a dependency cycle.
-Fix the registry or the skill file and re-run.
 
 ## Tests fail
 
-```powershell
-.\tests\run-tests.ps1
+```bash
+npm install
+npm run build
+npm test
 ```
 
 Tests use isolated temp directories. If a test leaves state behind, remove any
-`agentskills-test-*` folders under `%TEMP%`. If a test fails on a machine with a
-non-ASCII home path, please open an issue with the failing test name and output.
+`agentskills-*` folders under your temp directory.
 
-## Non-Windows / PowerShell 7
+## Non-Windows
 
-The module is plain PowerShell and should run on PowerShell 7. Non-Windows is
-**untested** in this repository. If you try it, note it as unverified.
+The TUI is written in Node and should run on macOS/Linux. It is **untested** there
+in this repository. If you try it, treat it as unverified.
 
 ## Rolling back an install
 
-Remove everything the tool created for a scope:
-
-```powershell
-.\installer\install.ps1 uninstall -All -Scope project
-```
-
-Backups of files that were overwritten are under `.agent-skills/backups/`.
-Copy a backup back manually if you need the original file.
+Run `npx agentskillsmd` and choose **Uninstall skills**. Backups of files that
+were overwritten are under `.agent-skills/backups/`; copy one back manually if you
+need the original.

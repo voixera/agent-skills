@@ -3,14 +3,10 @@
 # Normalize text file line endings to LF in the repository
 *.md   text eol=lf
 *.json text eol=lf
-*.ps1  text eol=lf
-*.psm1 text eol=lf
+*.ts   text eol=lf
+*.js   text eol=lf
 *.yml  text eol=lf
 *.yaml text eol=lf
-
-# Windows batch files must keep CRLF to run correctly
-*.cmd text eol=crlf
-*.bat text eol=crlf
 
 # Binary
 *.png binary

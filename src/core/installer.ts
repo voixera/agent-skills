@@ -1,92 +1,18 @@
-/**
- * Installation engine bridge (core).
+﻿/**
+ * Installation service (core).
  *
- * The TUI must not contain install logic (see the project requirement, section
- * 7). The single source of install truth is the PowerShell engine. This module
- * locates a PowerShell host and invokes the engine, parsing its output into
- * structured results.
- *
- * Planning is done in TypeScript (core/planner.ts) for instant previews, then
- * executed by the engine so previews and results cannot drift.
+ * Thin facade over the TypeScript engine, kept as the module the TUI imports.
+ * Everything runs in-process.
  */
 
-import { spawnSync, SpawnSyncReturns } from 'node:child_process';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
-import type { InstallResult, Scope } from '../types';
-import { resolvePackageRoot } from './registry';
-
-export interface PowerShellHost {
-  command: string;
-  isWindows: boolean;
-}
-
-/** Find a usable PowerShell host, or null when none is present. */
-export function findPowerShell(): PowerShellHost | null {
-  const candidates =
-    process.platform === 'win32'
-      ? ['powershell.exe', 'pwsh.exe', 'pwsh']
-      : ['pwsh', 'powershell'];
-
-  for (const command of candidates) {
-    const probe = spawnSync(command, ['-NoProfile', '-Command', '$PSVersionTable.PSVersion.Major'], {
-      encoding: 'utf8',
-      windowsHide: true,
-    });
-    if (!probe.error && probe.status === 0) {
-      return { command, isWindows: process.platform === 'win32' };
-    }
-  }
-  return null;
-}
-
-export function requirePowerShell(): PowerShellHost {
-  const host = findPowerShell();
-  if (!host) {
-    throw new Error(
-      'PowerShell was not found on this system.\n' +
-        'Agent Skills runs its installation engine on PowerShell. Install PowerShell 7+ ' +
-        '(https://aka.ms/powershell) and try again. Windows already includes PowerShell 5.1.'
-    );
-  }
-  return host;
-}
-
-export function installerScript(): string {
-  const root = resolvePackageRoot();
-  const script = path.join(root, 'installer', 'install.ps1');
-  if (!fs.existsSync(script)) {
-    throw new Error(`Installer engine not found at ${script}.`);
-  }
-  return script;
-}
-
-function runPowerShell(args: string[]): SpawnSyncReturns<string> {
-  const host = requirePowerShell();
-  return spawnSync(
-    host.command,
-    ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', installerScript(), ...args],
-    { encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024 }
-  );
-}
-
-/** Parse result lines like "[ok] PASS .codex/.../SKILL.md - create". */
-export function parseResultLines(output: string): InstallResult[] {
-  const results: InstallResult[] = [];
-  const re = /\[(?:ok|warn|error)\]\s+(PASS|FAIL|WARN|SKIP)\s+(\S+)(?:\s+-\s+(.*))?/g;
-  let match: RegExpExecArray | null;
-  while ((match = re.exec(output)) !== null) {
-    results.push({
-      status: match[1] as InstallResult['status'],
-      name: match[2],
-      message: (match[3] ?? '').trim(),
-      category: 'install',
-    });
-  }
-  return results;
-}
+import type { InstallResult, Registry, Scope } from '../types';
+import { applyPlan, verify, uninstallSkills, type ApplyOptions } from './engine';
+import { buildPlan } from './planner';
+import { readManifest } from './manifest';
+import { resolveDependencies } from './resolver';
 
 export interface ExecuteOptions {
+  registry: Registry;
   projectRoot: string;
   scope: Scope;
   agentIds: string[];
@@ -96,40 +22,22 @@ export interface ExecuteOptions {
 
 export interface ExecuteOutcome {
   exitCode: number;
-  stdout: string;
-  stderr: string;
   results: InstallResult[];
+  created: number;
+  updated: number;
+  skipped: number;
+  failed: number;
 }
 
-/**
- * Execute an installation. The engine writes files and the manifest; this
- * returns its exit code and parsed results.
- */
+/** Execute an installation in-process. */
 export function executeInstall(options: ExecuteOptions): ExecuteOutcome {
-  const args = [
-    'install',
-    '-Skills', options.skillIds.join(','),
-    '-Agents', options.agentIds.join(','),
-    '-Scope', options.scope,
-    '-Path', options.projectRoot,
-    '-Yes',
-  ];
-  if (options.force) args.push('-Force');
-
-  const proc = runPowerShell(args);
-  const stdout = proc.stdout ?? '';
-  const stderr = proc.stderr ?? '';
-
-  if (proc.error) {
-    throw proc.error;
-  }
-
-  return {
-    exitCode: proc.status ?? 1,
-    stdout,
-    stderr,
-    results: parseResultLines(stdout),
-  };
+  return applyPlan(options.registry, {
+    projectRoot: options.projectRoot,
+    scope: options.scope,
+    agentIds: options.agentIds,
+    skillIds: options.skillIds,
+    force: options.force,
+  } as ApplyOptions);
 }
 
 export interface VerifyOutcome {
@@ -138,28 +46,32 @@ export interface VerifyOutcome {
 }
 
 export function verifyInstallation(projectRoot: string, scope: Scope): VerifyOutcome {
-  const proc = runPowerShell(['verify', '-Scope', scope, '-Path', projectRoot]);
-  const stdout = proc.stdout ?? '';
-  return { exitCode: proc.status ?? 1, results: parseResultLines(stdout) };
+  const results = verify(projectRoot, scope);
+  const exitCode = results.some((r) => r.status === 'FAIL') ? 1 : 0;
+  return { exitCode, results };
 }
 
-export function uninstall(projectRoot: string, scope: Scope, skillIds: string[], agentIds: string[]): ExecuteOutcome {
-  const args = ['uninstall', '-Scope', scope, '-Path', projectRoot];
-  if (skillIds.length) args.push('-Skills', skillIds.join(','));
-  if (agentIds.length) args.push('-Agents', agentIds.join(','));
-  if (!skillIds.length && !agentIds.length) args.push('-All');
-
-  const proc = runPowerShell(args);
-  const stdout = proc.stdout ?? '';
-  return {
-    exitCode: proc.status ?? 1,
-    stdout,
-    stderr: proc.stderr ?? '',
-    results: parseResultLines(stdout),
-  };
+export interface UninstallOutcome {
+  exitCode: number;
+  results: InstallResult[];
 }
 
-export function validateEngine(): { exitCode: number; stdout: string } {
-  const proc = runPowerShell(['validate']);
-  return { exitCode: proc.status ?? 1, stdout: proc.stdout ?? '' };
+export function uninstall(
+  registry: Registry,
+  projectRoot: string,
+  scope: Scope,
+  skillIds: string[],
+  agentIds: string[]
+): UninstallOutcome {
+  const results = uninstallSkills(registry, {
+    projectRoot,
+    scope,
+    skillIds,
+    agentIds,
+    all: skillIds.length === 0 && agentIds.length === 0,
+  });
+  const exitCode = results.some((r) => r.status === 'FAIL') ? 1 : 0;
+  return { exitCode, results };
 }
+
+export { buildPlan };

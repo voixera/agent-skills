@@ -22,23 +22,20 @@ parse" — because results on unparseable input would be meaningless.
 
 ## Running the validator
 
-```powershell
-.\installer\install.ps1 validate -Svg -Path .\art\logo.svg
-```
+From the package API:
 
-Or from the module:
+```js
+const { validateSvgFile, validateSvgText } = require('agentskillsmd/dist/core/core');
 
-```powershell
-Import-Module .\src\AgentSkills\AgentSkills.psd1
-Invoke-AgentSkillsSvgValidation -Path .\art\logo.svg
-Invoke-AgentSkillsSvgValidation -Path .\art\logo.svg -Render   # attempt a render
-Invoke-AgentSkillsSvgValidation -Path .\art\logo.svg -RequireAccessible
+validateSvgFile('./art/logo.svg');
+validateSvgFile('./art/logo.svg', { render: true });     // attempt a render
+validateSvgFile('./art/logo.svg', { requireAccessible: true });
 ```
 
 ## What the security scan checks
 
 The scan is a transparent, auditable list of patterns
-(`src/AgentSkills/Private/SvgValidate.ps1`, `$script:AgentSkillsSvgDangerPatterns`):
+(`src/validators/svg.ts`, `DANGER_PATTERNS`):
 
 - `<script>` elements — `FAIL`.
 - Inline `on*` event-handler attributes — `FAIL`.
@@ -48,19 +45,18 @@ The scan is a transparent, auditable list of patterns
 - `<foreignObject>` — `WARN` (can embed arbitrary HTML).
 - `<use>` with an external reference — `WARN`.
 - Remote `<image>` references — `WARN` (privacy/availability).
-- DOCTYPE with an internal subset — `WARN`.
 
 ### This is not a security guarantee
 
 The scan is **pattern-based**. It can miss obfuscated or novel payloads
 (**false negatives**) and it can flag benign constructs (**false positives**).
-Treat it as one layer, not proof. The validator itself parses XML with DTD
-processing disabled and external entity resolution off, so validation does not
-introduce an XXE risk.
+Treat it as one layer, not proof. XML well-formedness is checked structurally
+(root element and closing tag), which is lighter than a full parser; this
+limitation is stated rather than hidden.
 
 ## Rendering
 
-`-Render` attempts a preview using the first renderer found on `PATH`:
+Rendering uses the first renderer found on `PATH`:
 
 | Renderer | Command |
 | --- | --- |

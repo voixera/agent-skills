@@ -1,9 +1,9 @@
 /**
  * Dry-run planner (core).
  *
- * Produces the same plan the PowerShell engine would execute, but in-process,
- * so the preview screen is instant. The engine still performs the real install;
- * this module never writes files.
+ * Produces the same plan the engine would execute, in-process, so the preview
+ * screen is instant. The engine performs the real install; this module never
+ * writes files.
  */
 
 import * as fs from 'node:fs';
@@ -19,7 +19,8 @@ import type {
 import { getAgent, getSkill } from './registry';
 import { resolveDependencies } from './resolver';
 import { homeDirectory, readManifest } from './manifest';
-import { MANAGED_BLOCK_MARKERS } from './adapters';
+import { MANAGED_BLOCK_MARKERS, renderForAgent } from './adapters';
+import { readSkillContent } from './skill-content';
 
 export interface PlanOptions {
   registry: Registry;
@@ -121,6 +122,19 @@ export function buildPlan(options: PlanOptions): InstallPlan {
       }
 
       const exists = fs.existsSync(destination);
+      let action: 'create' | 'overwrite' | 'unchanged' = exists ? 'overwrite' : 'create';
+      if (exists) {
+        // Compare rendered content so an unchanged install is a no-op.
+        try {
+          const rendered = renderForAgent(readSkillContent(skill), agent);
+          const current = fs.readFileSync(destination, 'utf8');
+          if (current.replace(/\r\n/g, '\n') === rendered.replace(/\r\n/g, '\n')) {
+            action = 'unchanged';
+          }
+        } catch {
+          // Fall back to overwrite if rendering fails.
+        }
+      }
       actions.push({
         kind: 'file',
         agentId,
@@ -128,7 +142,7 @@ export function buildPlan(options: PlanOptions): InstallPlan {
         skillVersion: skill.version,
         destination,
         relativePath: path.relative(root, destination).split(path.sep).join('/'),
-        action: exists ? 'overwrite' : 'create',
+        action,
         format: agent.format,
       });
     }

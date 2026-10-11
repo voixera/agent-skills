@@ -3,8 +3,7 @@
  *
  * Shows real progress. There is no artificial animation: each step reflects a
  * genuine operation, and a step is only marked done after it completes. The
- * heavy lifting (file writes, manifest) is performed by the PowerShell engine
- * in a single call; the surrounding steps are real too.
+ * engine runs in-process (TypeScript).
  */
 
 import type { InstallResult, Registry, UserSelection } from '../../types';
@@ -35,23 +34,22 @@ export async function progressScreen(
     process.stdout.write(`    ${mark} ${label}${extra ? `  ${paint(extra, 'dim')}` : ''}\n`);
   };
 
-  // Step 1: registry is already validated at startup, but resolve for the record.
+  // Step 1: resolve dependencies.
   let resolved: string[] = selection.skillIds;
-  let addedDeps: string[] = [];
   try {
     const r = resolveDependencies(registry, selection.skillIds);
     resolved = r.resolved;
-    addedDeps = r.addedDependencies;
     step('Resolving skill dependencies', true, `${resolved.length} skill(s)`);
   } catch (err) {
     step('Resolving skill dependencies', false, (err as Error).message);
     return { exitCode: 1, results: [], verify: [], created: 0, updated: 0, skipped: 0, failed: 1, warnings: 0 };
   }
 
-  // Step 2: execute the engine (this performs real file writes + the manifest).
+  // Step 2: apply the plan (real file writes + manifest).
   let outcome;
   try {
     outcome = executeInstall({
+      registry,
       projectRoot: selection.projectRoot,
       scope: selection.scope,
       agentIds: selection.agentIds,
@@ -59,25 +57,19 @@ export async function progressScreen(
       force,
     });
   } catch (err) {
-    step('Running the installation engine', false, (err as Error).message);
+    step('Applying the installation plan', false, (err as Error).message);
     return { exitCode: 1, results: [], verify: [], created: 0, updated: 0, skipped: 0, failed: 1, warnings: 0 };
   }
 
-  const created = outcome.results.filter((r) => r.status === 'PASS' && r.message === 'create').length;
-  const updated = outcome.results.filter((r) => r.status === 'PASS' && r.message === 'overwrite').length;
-  const skipped = outcome.results.filter((r) => r.status === 'SKIP').length;
-  const failed = outcome.results.filter((r) => r.status === 'FAIL').length;
-  const warnings = outcome.results.filter((r) => r.status === 'WARN').length;
-
-  step('Writing skill files', outcome.exitCode === 0, `${created} new, ${updated} updated`);
-  step('Writing installation manifest', outcome.exitCode === 0);
+  step('Writing skill files', outcome.failed === 0, `${outcome.created} new, ${outcome.updated} updated`);
+  step('Writing installation manifest', outcome.failed === 0);
 
   // Step 3: verify against the manifest (real check).
-  let verify: InstallResult[] = [];
-  if (outcome.exitCode === 0) {
+  let verifyResults: InstallResult[] = [];
+  if (outcome.failed === 0) {
     try {
       const v = verifyInstallation(selection.projectRoot, selection.scope);
-      verify = v.results;
+      verifyResults = v.results;
       const bad = v.results.filter((r) => r.status === 'FAIL').length;
       step('Verifying installed files', bad === 0, bad === 0 ? 'all present' : `${bad} missing`);
     } catch (err) {
@@ -88,24 +80,16 @@ export async function progressScreen(
   }
 
   process.stdout.write('\n');
-  if (outcome.exitCode !== 0 && outcome.stderr) {
-    process.stdout.write(`  ${paint('Engine output:', 'error')}\n`);
-    process.stdout.write(
-      outcome.stderr
-        .split('\n')
-        .map((l) => `    ${l}`)
-        .join('\n') + '\n'
-    );
-  }
 
   return {
     exitCode: outcome.exitCode,
     results: outcome.results,
-    verify,
-    created,
-    updated,
-    skipped,
-    failed,
-    warnings,
+    verify: verifyResults,
+    created: outcome.created,
+    updated: outcome.updated,
+    skipped: outcome.skipped,
+    failed: outcome.failed,
+    warnings: outcome.results.filter((r) => r.status === 'WARN').length,
   };
 }
+

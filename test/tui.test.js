@@ -12,6 +12,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert');
+const fs = require('node:fs');
 const { spawnSync } = require('node:child_process');
 const path = require('node:path');
 
@@ -20,6 +21,7 @@ const bin = path.join(root, 'bin', 'agentskillsmd.js');
 const entry = path.join(root, 'dist', 'cli', 'entry.js');
 
 test('banner and description render', () => {
+  const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
   const r = spawnSync(process.execPath, [bin], {
     encoding: 'utf8',
     env: { ...process.env, AGENT_SKILLS_NO_COLOR: '1' },
@@ -27,7 +29,7 @@ test('banner and description render', () => {
   assert.strictEqual(r.status, 0);
   assert.match(r.stdout, /AGENT SKILLS/);
   assert.match(r.stdout, /Multi-agent skills manager/);
-  assert.match(r.stdout, /v1\.1\.0/);
+  assert.ok(r.stdout.includes(`v${pkg.version}`), `expected banner to show v${pkg.version}`);
 });
 
 test('non-TTY is detected and does not launch the interactive TUI', () => {

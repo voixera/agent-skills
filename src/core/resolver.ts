@@ -1,8 +1,8 @@
-/**
+﻿/**
  * Selection resolution (core): expand a set of requested skill ids into a
  * dependency-closed set, and expand presets into skill ids.
  *
- * This mirrors the PowerShell engine's resolver so the TUI can preview exactly
+ * so the TUI can preview exactly
  * what will be installed before shelling out.
  */
 
