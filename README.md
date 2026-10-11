@@ -24,10 +24,6 @@ that with **explicit, testable rules** - not vibes:
 - **Hand-waved SVG** - "syntactically valid" but clipped, inaccessible, unsafe,
   or visually incoherent.
 
-> **Honest scope.** This does not make an AI infallible and does not eliminate
-> "AI slop". It reduces a specific class of *preventable* problems with explicit
-> instructions, deterministic checks, and clearly reported limits. No check is
-> ever reported as passed unless it actually ran.
 
 ## Quick start
 
