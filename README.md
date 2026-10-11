@@ -102,8 +102,47 @@ Install and run with `npx` - no clone required:
 npx agentskillsmd
 ```
 
-That opens the interactive installer. For scripts and CI, use a non-interactive
-command:
+That opens a guided, interactive setup: a 4-step wizard where you **choose** with
+the keyboard instead of memorizing commands.
+
+```text
+  ------------------------------------------------------
+   AGENT SKILLS
+   Multi-Agent Skills Manager  v1.0.0
+  ------------------------------------------------------
+
+  1/4  Where should skills be installed?
+  > This project  (C:\dev\my-app)
+    My user profile  (applies everywhere)
+
+  2/4  Which AI agents do you use?
+     [x] OpenAI Codex           [native]
+  >  [ ] Claude Code           [native]
+     [ ] Cursor                [rules]
+     [ ] Gemini CLI            [instructions]
+     (up/down move, space toggles, "a" all, enter confirms)
+
+  3/4  Start from a preset, or pick skills yourself?
+     SVG Specialist
+  >  Custom
+
+  4/4  Review
+    Summary
+      Agents  : codex, claude-code
+      Skills  : svg-craft, icon-design, ...
+      Changes : 12 new, 0 updated, 0 unchanged
+    Files
+      [new   ] .codex/skills/svg-craft/SKILL.md
+      [new   ] .claude/skills/svg-craft/SKILL.md
+  Apply these changes? [y/N]
+```
+
+- **Arrow keys** move, **space** toggles a skill/agent, **a** selects all,
+  **enter** confirms. Run it in a normal terminal for the full experience.
+- On hosts that cannot read keys (piped/redirected input), it automatically
+  falls back to simple numbered prompts, so it works in any script.
+
+For scripts and CI, skip the wizard with a non-interactive command:
 
 ```bash
 npx agentskillsmd install -Preset minimal -Agents claude-code -Scope project -Yes

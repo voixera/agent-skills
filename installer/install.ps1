@@ -120,9 +120,14 @@ function Get-ProjectRoot {
 }
 
 function Write-Banner {
+    param([string] $Subtitle = 'Multi-Agent Skills Manager')
+    $version = Get-AgentSkillsToolVersion
+    $line = '-' * 54
     Write-Host ''
-    Write-Host 'AGENT SKILLS'
-    Write-Host 'Multi-Agent Skills Manager'
+    Write-Host ('  ' + $line) -ForegroundColor DarkCyan
+    Write-Host '   AGENT SKILLS' -ForegroundColor Cyan
+    Write-Host ('   ' + $Subtitle + '  ' + ('v' + $version)) -ForegroundColor DarkGray
+    Write-Host ('  ' + $line) -ForegroundColor DarkCyan
     Write-Host ''
 }
 
@@ -253,32 +258,49 @@ function Get-AgentSelection {
 
 function Show-Plan {
     param($Plan)
+
+    $creates   = @($Plan.Actions | Where-Object { $_.Action -eq 'create' }).Count
+    $overwrites = @($Plan.Actions | Where-Object { $_.Action -eq 'overwrite' }).Count
+    $unchanged = @($Plan.Actions | Where-Object { $_.Action -eq 'unchanged' }).Count
+
     Write-Host ''
-    Write-Host ('Scope:   {0}' -f $Plan.Scope)
-    Write-Host ('Root:    {0}' -f $Plan.ScopeRoot)
-    Write-Host ('Agents:  {0}' -f ($Plan.Agents -join ', '))
-    Write-Host ('Skills:  {0}' -f ($Plan.Resolved -join ', '))
+    Write-Host '  Summary' -ForegroundColor Cyan
+    Write-Host ('    Scope   : {0}' -f $Plan.Scope)
+    Write-Host ('    Root    : {0}' -f $Plan.ScopeRoot)
+    Write-Host ('    Agents  : {0}' -f ($Plan.Agents -join ', '))
+    Write-Host ('    Skills  : {0}' -f ($Plan.Resolved -join ', '))
+    Write-Host ('    Changes : {0} new, {1} updated, {2} unchanged' -f $creates, $overwrites, $unchanged)
     if (@($Plan.AddedDependencies).Count -gt 0) {
-        Write-Host ('Added dependencies: {0}' -f ($Plan.AddedDependencies -join ', ')) -ForegroundColor Yellow
+        Write-Host ('    + deps  : {0}' -f ($Plan.AddedDependencies -join ', ')) -ForegroundColor Yellow
     }
     Write-Host ''
-    Write-Host 'Planned file changes:'
-    foreach ($a in $Plan.Actions) {
-        $verb = switch ($a.Action) {
-            'create'    { 'create   ' }
-            'overwrite' { 'overwrite' }
-            'unchanged' { 'unchanged' }
-            default     { $a.Action }
+
+    if (@($Plan.Actions).Count -gt 0) {
+        Write-Host '  Files' -ForegroundColor Cyan
+        foreach ($a in $Plan.Actions) {
+            $tag = switch ($a.Action) {
+                'create'    { @{ Text = 'new    '; Color = 'Green' } }
+                'overwrite' { @{ Text = 'update '; Color = 'Yellow' } }
+                'unchanged' { @{ Text = 'same   '; Color = 'DarkGray' } }
+                default     { @{ Text = $a.Action; Color = 'Gray' } }
+            }
+            Write-Host ('    ') -NoNewline
+            Write-Host ('[{0}]' -f $tag.Text) -NoNewline -ForegroundColor $tag.Color
+            Write-Host (' {0}' -f $a.RelativePath)
         }
-        Write-Host ("  [{0}] {1}" -f $verb, $a.RelativePath)
     }
+
     if (@($Plan.Diagnostics).Count -gt 0) {
         Write-Host ''
-        Write-Host 'Notes:'
-        foreach ($d in $Plan.Diagnostics) { Write-Host ("  {0}" -f (Format-AgentSkillsResultLine -Result $d)) }
+        Write-Host '  Notes' -ForegroundColor Cyan
+        foreach ($d in @($Plan.Diagnostics)) {
+            $color = switch ($d.Status) { 'FAIL' { 'Red' } 'WARN' { 'Yellow' } default { 'Gray' } }
+            Write-Host ('    {0}' -f (Format-AgentSkillsResultLine -Result $d)) -ForegroundColor $color
+        }
     }
     Write-Host ''
 }
+
 
 function Invoke-InstallCommand {
     param($Opts)
@@ -411,42 +433,198 @@ function Invoke-UpdateCommand {
 # ---------------------------------------------------------------------------
 # Interactive installer
 # ---------------------------------------------------------------------------
-function Read-MultiSelect {
+function Test-InteractiveConsole {
     <#
     .SYNOPSIS
-        Numbered multi-select with a comma-separated response. No arrow keys are
-        required, keeping it usable on any console host.
+        True when we can read individual keys (arrow-key navigation available).
+        False in redirected/piped hosts, where we fall back to numbered input.
     #>
+    try {
+        if ([Console]::IsInputRedirected) { return $false }
+    } catch { return $false }
+    try { return -not $Host.UI.RawUI.KeyAvailable -or $true } catch { return $false }
+}
+
+function Read-Key {
+    <#
+    .SYNOPSIS
+        Reads a single key without echoing it. Returns an object with Key and
+        Char. Only called when Test-InteractiveConsole is true.
+    #>
+    $k = [Console]::ReadKey($true)
+    return [pscustomobject]@{ Key = $k.Key; Char = $k.KeyChar }
+}
+
+function Write-Checkbox {
+    param([bool] $Checked, [string] $Text, [bool] $Active)
+    $box = if ($Checked) { '[x]' } else { '[ ]' }
+    $pointer = if ($Active) { '>' } else { ' ' }
+    if ($Active) {
+        Write-Host "   $pointer $box $Text" -ForegroundColor White
+    } else {
+        Write-Host "     $box $Text"
+    }
+}
+
+function Read-InteractiveMultiSelect {
+    <#
+    .SYNOPSIS
+        Checkbox multi-select with arrow keys + space to toggle, Enter to confirm.
+        Falls back to a numbered prompt when the console cannot read keys.
+
+    .OUTPUTS
+        Array of selected items. Never called with an empty result unless the
+        caller allows it.
+    #>
+    param(
+        [Parameter(Mandatory)] [string] $Prompt,
+        [Parameter(Mandatory)] [object[]] $Items,
+        [Parameter(Mandatory)] [scriptblock] $Display,
+        [scriptblock] $Detail,
+        [switch] $AllowEmpty,
+        [switch] $AllowBack
+    )
+
+    $count = $Items.Count
+    if ($count -eq 0) { return @() }
+
+    if (-not (Test-InteractiveConsole)) {
+        return Read-NumberedMultiSelect -Prompt $Prompt -Items $Items -Display $Display -Detail $Detail -AllowEmpty:$AllowEmpty
+    }
+
+    $checked = New-Object bool[] $count
+    $cursor = 0
+
+    $render = {
+        for ($i = 0; $i -lt $count; $i++) {
+            $active = ($i -eq $cursor)
+            $label = (& $Display $Items[$i])
+            if ($Detail) {
+                $d = (& $Detail $Items[$i])
+                if ($d) { $label = "$label  " + $d }
+            }
+            Write-Checkbox -Checked $checked[$i] -Text $label -Active $active
+        }
+    }
+
+    Write-Host ''
+    Write-Host "   $Prompt" -ForegroundColor Cyan
+    Write-Host '   (up/down move, space toggles, "a" all, enter confirms)' -ForegroundColor DarkGray
+
+    $render.Invoke()
+    while ($true) {
+        $key = Read-Key
+        switch ($key.Key) {
+            'UpArrow'   { $cursor = ($cursor - 1 + $count) % $count; Clear-Lines $count; $render.Invoke() }
+            'DownArrow' { $cursor = ($cursor + 1) % $count; Clear-Lines $count; $render.Invoke() }
+            'Spacebar'  {
+                if (-not $AllowEmpty -and @($checked | Where-Object { $_ }).Count -eq 1 -and $checked[$cursor]) {
+                    # Prevent deselecting the last item when empty is not allowed.
+                } else {
+                    $checked[$cursor] = -not $checked[$cursor]
+                }
+                Clear-Lines $count; $render.Invoke()
+            }
+            'Enter' {
+                $picked = @()
+                for ($i = 0; $i -lt $count; $i++) { if ($checked[$i]) { $picked += $Items[$i] } }
+                if ($picked.Count -eq 0 -and -not $AllowEmpty) {
+                    Write-Host '   Select at least one. ' -ForegroundColor Yellow
+                    continue
+                }
+                return $picked
+            }
+            default {
+                if ($key.Char -eq 'a' -or $key.Char -eq 'A') {
+                    $all = @($checked | Where-Object { $_ }).Count -ne $count
+                    for ($i = 0; $i -lt $count; $i++) { $checked[$i] = $all }
+                    Clear-Lines $count; $render.Invoke()
+                }
+            }
+        }
+    }
+}
+
+function Read-InteractiveSingleSelect {
+    param(
+        [Parameter(Mandatory)] [string] $Prompt,
+        [Parameter(Mandatory)] [object[]] $Items,
+        [Parameter(Mandatory)] [scriptblock] $Display,
+        [switch] $AllowBack
+    )
+
+    $count = $Items.Count
+    if ($count -eq 0) { return $null }
+
+    if (-not (Test-InteractiveConsole)) {
+        return Read-NumberedSingleSelect -Prompt $Prompt -Items $Items -Display $Display -AllowBack:$AllowBack
+    }
+
+    $cursor = 0
+    $render = {
+        for ($i = 0; $i -lt $count; $i++) {
+            $active = ($i -eq $cursor)
+            $label = (& $Display $Items[$i])
+            if ($active) { Write-Host "   > $label" -ForegroundColor White }
+            else { Write-Host "     $label" }
+        }
+        if ($AllowBack) { Write-Host '     (Esc to go back)' -ForegroundColor DarkGray }
+    }
+
+    Write-Host ''
+    Write-Host "   $Prompt" -ForegroundColor Cyan
+    Write-Host '   (up/down move, enter selects)' -ForegroundColor DarkGray
+    $render.Invoke()
+    while ($true) {
+        $key = Read-Key
+        switch ($key.Key) {
+            'UpArrow'   { $cursor = ($cursor - 1 + $count) % $count; Clear-Lines ($count + $(if ($AllowBack) { 1 } else { 0 })); $render.Invoke() }
+            'DownArrow' { $cursor = ($cursor + 1) % $count; Clear-Lines ($count + $(if ($AllowBack) { 1 } else { 0 })); $render.Invoke() }
+            'Enter'     { return $Items[$cursor] }
+            'Escape'    { if ($AllowBack) { return $null } }
+        }
+    }
+}
+
+function Clear-Lines {
+    param([int] $Count)
+    for ($i = 0; $i -lt $Count; $i++) {
+        $pos = [Console]::CursorLeft
+        [Console]::SetCursorPosition(0, [Console]::CursorTop - 1)
+        Write-Host (' ' * [Math]::Max(1, [Console]::BufferWidth - 1))
+        [Console]::SetCursorPosition(0, [Console]::CursorTop - 1)
+    }
+}
+
+# ---------- numbered fallbacks (redirected hosts) ----------
+
+function Read-NumberedMultiSelect {
     param(
         [string] $Prompt,
         [object[]] $Items,
         [scriptblock] $Display,
-        [scriptblock] $Key,
+        [scriptblock] $Detail,
         [switch] $AllowEmpty
     )
-
     for ($i = 0; $i -lt $Items.Count; $i++) {
-        Write-Host ("  [{0,2}] {1}" -f ($i + 1), (& $Display $Items[$i]))
+        $label = (& $Display $Items[$i])
+        if ($Detail) { $d = (& $Detail $Items[$i]); if ($d) { $label = "$label  $d" } }
+        Write-Host ("  [{0,2}] {1}" -f ($i + 1), $label)
     }
     Write-Host '  (enter numbers separated by commas, or "all")'
     while ($true) {
         $raw = Read-Host $Prompt
         if ([string]::IsNullOrWhiteSpace($raw)) {
             if ($AllowEmpty) { return @() }
-            Write-Host '  Please choose at least one.'
-            continue
+            Write-Host '  Please choose at least one.'; continue
         }
         if ($raw.Trim().ToLowerInvariant() -eq 'all') { return @($Items) }
-
-        $chosen = @()
-        $valid = $true
+        $chosen = @(); $valid = $true
         foreach ($part in ($raw -split ',')) {
             $p = $part.Trim()
             if ($p -eq '') { continue }
             if ($p -notmatch '^\d+$' -or [int]$p -lt 1 -or [int]$p -gt $Items.Count) {
-                Write-Host ("  '{0}' is not a valid choice." -f $p)
-                $valid = $false
-                break
+                Write-Host ("  '{0}' is not a valid choice." -f $p); $valid = $false; break
             }
             $chosen += $Items[[int]$p - 1]
         }
@@ -454,14 +632,13 @@ function Read-MultiSelect {
     }
 }
 
-function Read-SingleSelect {
+function Read-NumberedSingleSelect {
     param(
         [string] $Prompt,
         [object[]] $Items,
         [scriptblock] $Display,
         [switch] $AllowBack
     )
-
     for ($i = 0; $i -lt $Items.Count; $i++) {
         Write-Host ("  [{0,2}] {1}" -f ($i + 1), (& $Display $Items[$i]))
     }
@@ -477,62 +654,86 @@ function Read-SingleSelect {
     }
 }
 
+
+function Write-Section {
+    param([string] $Step, [string] $Title)
+    Write-Host ''
+    Write-Host ("  {0}  {1}" -f $Step, $Title) -ForegroundColor Cyan
+}
+
 function Invoke-InteractiveInstall {
     Write-Banner
-    Write-Host 'Welcome to Agent Skills Setup.'
-
-    # Scope.
-    $scopes = @('project', 'user')
-    $scope = Read-SingleSelect -Prompt 'Select installation scope' -Items $scopes `
-        -Display { param($s) if ($s -eq 'project') { 'Current project' } else { 'User configuration' } } `
-        -AllowBack
-    if ($null -eq $scope) { Write-Host 'Back.'; return $EXIT_SUCCESS }
-
-    # Agents.
-    $agents = @(Get-AgentSkillsAgentList | Where-Object { @($_.scopes) -contains $scope } | Sort-Object id)
-    Write-Host ''
-    Write-Host 'Select AI agents:'
-    $selectedAgents = Read-MultiSelect -Prompt 'Agents' -Items $agents -Display { param($a) $a.name }
-
-    # Preset.
-    Write-Host ''
-    Write-Host 'Select a preset (or choose Custom to pick skills):'
-    $presets = @(Get-AgentSkillsPresetList | Sort-Object id)
-    $presetItems = @($presets) + @([pscustomobject]@{ id = '__custom__'; name = 'Custom'; description = 'Choose individual skills' })
-    $preset = Read-SingleSelect -Prompt 'Preset' -Items $presetItems -Display { param($p) "$($p.name) - $($p.description)" }
-
-    $skillIds = @()
-    if ($preset.id -eq '__custom__') {
-        Write-Host ''
-        Write-Host 'Select skill packs:'
-        $allSkills = @(Get-AgentSkillsList | Sort-Object category, id)
-        $chosen = Read-MultiSelect -Prompt 'Skills' -Items $allSkills -Display { param($s) "$($s.category)/$($s.id)" }
-        $skillIds = @($chosen | ForEach-Object { $_.id })
-    } else {
-        $skillIds = @(Get-AgentSkillsPresetSkills -PresetId $preset.id)
-    }
+    Write-Host '  Welcome. A few choices and we will install your skills.' -ForegroundColor Gray
 
     $projectRoot = (Get-Location).Path
 
-    Write-Host ''
+    # Step 1 - scope.
+    Write-Section -Step '1/4' -Title 'Where should skills be installed?'
+    $scopeItems = @(
+        [pscustomobject]@{ id = 'project'; name = 'This project'; hint = "($projectRoot)" },
+        [pscustomobject]@{ id = 'user';    name = 'My user profile'; hint = '(applies everywhere)' }
+    )
+    $scopeItem = Read-InteractiveSingleSelect -Prompt 'Installation scope' -Items $scopeItems `
+        -Display { param($s) "$($s.name)  $($s.hint)" } -AllowBack
+    if ($null -eq $scopeItem) { Write-Host '  Cancelled.'; return $EXIT_SUCCESS }
+    $scope = $scopeItem.id
+
+    # Step 2 - agents.
+    Write-Section -Step '2/4' -Title 'Which AI agents do you use?'
+    $agents = @(Get-AgentSkillsAgentList | Where-Object { @($_.scopes) -contains $scope } | Sort-Object id)
+    $selectedAgents = Read-InteractiveMultiSelect -Prompt 'Agents (space to toggle, enter to confirm)' `
+        -Items $agents `
+        -Display { param($a) $a.name } `
+        -Detail { param($a) "[$($a.supportLevel)]" }
+    $agentIds = @($selectedAgents | ForEach-Object { $_.id })
+    Write-Host ("  Selected: {0}" -f ($selectedAgents.name -join ', ')) -ForegroundColor Green
+
+    # Step 3 - preset or custom.
+    Write-Section -Step '3/4' -Title 'Start from a preset, or pick skills yourself?'
+    $presets = @(Get-AgentSkillsPresetList | Sort-Object id)
+    $presetItems = @($presets) + @([pscustomobject]@{ id = '__custom__'; name = 'Custom'; description = 'Choose individual skills' })
+    $preset = Read-InteractiveSingleSelect -Prompt 'Preset' -Items $presetItems `
+        -Display { param($p) $p.name } -AllowBack
+    if ($null -eq $preset) { Write-Host '  Cancelled.'; return $EXIT_SUCCESS }
+
+    if ($preset.id -eq '__custom__') {
+        $allSkills = @(Get-AgentSkillsList | Sort-Object category, id)
+        $chosen = Read-InteractiveMultiSelect -Prompt 'Skills (space to toggle, "a" selects all)' `
+            -Items $allSkills `
+            -Display { param($s) $s.name } `
+            -Detail { param($s) "($($s.category))" }
+        $skillIds = @($chosen | ForEach-Object { $_.id })
+    } else {
+        $skillIds = @(Get-AgentSkillsPresetSkills -PresetId $preset.id)
+        Write-Host ("  Preset '{0}' includes {1} skill(s)." -f $preset.name, $skillIds.Count) -ForegroundColor Green
+    }
+
+    # Step 4 - preview and confirm.
+    Write-Section -Step '4/4' -Title 'Review'
     try {
-        $plan = New-AgentSkillsInstallPlan -SkillIds $skillIds -AgentIds @($selectedAgents | ForEach-Object { $_.id }) `
-            -Scope $scope -ProjectRoot $projectRoot
+        $plan = New-AgentSkillsInstallPlan -SkillIds $skillIds -AgentIds $agentIds -Scope $scope -ProjectRoot $projectRoot
     } catch {
-        Write-Host ("[error] {0}" -f $_.Exception.Message) -ForegroundColor Red
+        Write-Host ("  [error] {0}" -f $_.Exception.Message) -ForegroundColor Red
         return $EXIT_FAILURE
     }
 
     Show-Plan -Plan $plan
-    $answer = Read-Host 'Apply these changes? [y/N]'
-    if ($answer -notmatch '^(y|yes)$') { Write-Host 'Aborted.'; return $EXIT_SUCCESS }
+
+    $answer = Read-Host '  Apply these changes? [y/N]'
+    if ($answer -notmatch '^(y|yes)$') { Write-Host '  Aborted.'; return $EXIT_SUCCESS }
 
     $results = Invoke-AgentSkillsInstallPlan -Plan $plan
     Write-Host ''
     $summary = Write-AgentSkillsResults -Results $results
+
+    if ($summary.Fail -eq 0) {
+        Write-Host ''
+        Write-Host '  Done. Your agents will pick up the skills in a new session.' -ForegroundColor Green
+    }
     if ($summary.Fail -gt 0) { return $EXIT_FAILURE }
     return $EXIT_SUCCESS
 }
+
 
 function Show-Help {
     Write-Banner
