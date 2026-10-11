@@ -1,0 +1,39 @@
+# Agent Skills - ignore rules
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# Test / tooling output
+tests/.tmp/
+*.testresult.xml
+TestResults/
+coverage/
+.pester/
+
+# Local installation artifacts created by the installer inside THIS repo
+# (the installer writes per-target manifests; keep them out of source control)
+.agent-skills/*
+!.agent-skills/.gitkeep
+
+# Node (only used by optional tooling such as markdownlint / svgo)
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# Secrets - never commit these
+.env
+.env.*
+*.pem
+*.key
+secrets.json
+
+# PowerShell
+*.clixml

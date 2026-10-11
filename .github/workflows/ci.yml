@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Least privilege: the workflow only needs to read the repository.
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate registry and skills
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate registry and skills
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          .\installer\install.ps1 validate
+
+  test:
+    name: Run test suite
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run tests
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          .\tests\run-tests.ps1
+
+  lint:
+    name: Lint PowerShell and markdown
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PSScriptAnalyzer
+        shell: powershell
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force -AllowClobber
+
+      - name: Analyze PowerShell
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $files = Get-ChildItem -Recurse -Include *.ps1, *.psm1 -Path src, installer, tests
+          $issues = Invoke-ScriptAnalyzer -Path src, installer -Severity Error
+          if ($issues) {
+            $issues | Format-Table -AutoSize
+            throw "PSScriptAnalyzer found $($issues.Count) error-level issue(s)."
+          }
+          Write-Host "PSScriptAnalyzer: no error-level issues."
+
+      - name: Lint markdown
+        shell: powershell
+        run: |
+          npx --yes markdownlint-cli@0.42.0 "**/*.md" --config .markdownlint.json --ignore node_modules
+        continue-on-error: true
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

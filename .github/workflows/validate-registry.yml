@@ -1,0 +1,35 @@
+name: Validate registry
+
+on:
+  pull_request:
+    paths:
+      - 'registry/**'
+      - 'skills/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  registry:
+    name: Registry schema and references
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Import-Module .\src\AgentSkills\AgentSkills.psd1 -Force
+          $results = Invoke-AgentSkillsValidation
+          $results | ForEach-Object {
+            $line = "{0} {1} - {2}" -f $_.Status, $_.Name, $_.Message
+            Write-Host $line
+          }
+          $failed = @($results | Where-Object { $_.Status -eq 'FAIL' })
+          if ($failed.Count -gt 0) {
+            throw "Registry validation failed with $($failed.Count) error(s)."
+          }
+          Write-Host "Registry validation passed."

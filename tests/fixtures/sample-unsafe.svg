@@ -1,0 +1,5 @@
+<!-- Intentionally unsafe: used to assert that the SVG security scan flags it. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+  <script>alert('xss')</script>
+  <rect width="10" height="10" onclick="evil()"/>
+</svg>

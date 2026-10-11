@@ -1,0 +1,58 @@
+{
+  "name": "agent-skills",
+  "version": "1.0.0",
+  "description": "Multi-agent skills manager and anti-slop engineering toolkit. Installs modular SKILL.md-based skill packs into supported AI coding agents.",
+  "keywords": [
+    "ai",
+    "agents",
+    "skills",
+    "codex",
+    "claude-code",
+    "cursor",
+    "copilot",
+    "svg",
+    "cli",
+    "tooling"
+  ],
+  "license": "MIT",
+  "author": "Agent Skills contributors",
+  "homepage": "https://github.com/voixera/agent-skills",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voixera/agent-skills.git"
+  },
+  "bugs": {
+    "url": "https://github.com/voixera/agent-skills/issues"
+  },
+  "bin": {
+    "agent-skills": "bin/agent-skills.js"
+  },
+  "files": [
+    "bin/",
+    "installer/",
+    "src/",
+    "registry/",
+    "skills/",
+    "adapters/",
+    "docs/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "os": [
+    "win32",
+    "linux",
+    "darwin"
+  ],
+  "scripts": {
+    "test": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1",
+    "validate": "powershell -NoProfile -ExecutionPolicy Bypass -File installer/install.ps1 validate",
+    "prepublishOnly": "node -e \"require('fs').accessSync('installer/install.ps1');console.log('installer present')\""
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

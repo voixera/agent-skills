@@ -1,0 +1,13 @@
+---
+description: Design icons on a consistent grid with readable silhouettes, coherent corners, and no detail that disappears at small sizes.
+globs:
+alwaysApply: false
+---
+
+# Icon Design
+
+(abridged body)
+
+## Core principle
+
+An icon is a glyph, not a tiny illustration.

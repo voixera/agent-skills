@@ -1,0 +1,238 @@
+{
+  "$schema": "./schema/agents.schema.json",
+  "version": "1.0.0",
+  "updated": "2026-02-14",
+  "notes": [
+    "supportLevel: native = agent has a first-class skill discovery mechanism.",
+    "supportLevel: rules = agent reads per-file rule documents, not discrete skills.",
+    "supportLevel: instructions = agent reads a single aggregated instruction file.",
+    "evidence: verified = the installation path/format was observed in this repository's authoring environment.",
+    "evidence: documented = the path/format is based on the vendor's public documentation but was NOT observed locally.",
+    "Adapters transform canonical SKILL.md content; they never blindly copy files."
+  ],
+  "agents": [
+    {
+      "id": "codex",
+      "name": "OpenAI Codex",
+      "adapter": "codex",
+      "supportLevel": "native",
+      "evidence": "verified",
+      "scopes": ["project", "user"],
+      "features": ["skills", "instructions"],
+      "paths": {
+        "project": ".codex/skills/<skillId>/SKILL.md",
+        "user": "~/.codex/skills/<skillId>/SKILL.md"
+      },
+      "detect": [".codex", "~/.codex", "~/.codex/config.toml"],
+      "format": "skill-md",
+      "limitations": [
+        "Only skills placed as <dir>/SKILL.md with name+description frontmatter are discovered.",
+        "A new session/turn is required before an installed skill becomes available."
+      ],
+      "docs": "https://github.com/openai/codex"
+    },
+    {
+      "id": "claude-code",
+      "name": "Claude Code",
+      "adapter": "claude-code",
+      "supportLevel": "native",
+      "evidence": "verified",
+      "scopes": ["project", "user"],
+      "features": ["skills", "instructions"],
+      "paths": {
+        "project": ".claude/skills/<skillId>/SKILL.md",
+        "user": "~/.claude/skills/<skillId>/SKILL.md"
+      },
+      "detect": [".claude", "~/.claude", "~/.claude/settings.json"],
+      "format": "skill-md",
+      "limitations": [
+        "Skill directory name must be kebab-case and the file must be exactly SKILL.md (case-sensitive).",
+        "Frontmatter must not contain XML angle brackets."
+      ],
+      "docs": "https://docs.claude.com/en/docs/claude-code"
+    },
+    {
+      "id": "cursor",
+      "name": "Cursor",
+      "adapter": "cursor",
+      "supportLevel": "rules",
+      "evidence": "documented",
+      "scopes": ["project", "user"],
+      "features": ["rules"],
+      "paths": {
+        "project": ".cursor/rules/<skillId>.mdc",
+        "user": "~/.cursor/rules/<skillId>.mdc"
+      },
+      "detect": [".cursor", "~/.cursor"],
+      "format": "mdc-frontmatter",
+      "limitations": [
+        "Cursor consumes project rules (.mdc) rather than discrete 'skills'.",
+        "The adapter emits an .mdc rule with description/globs/alwaysApply frontmatter.",
+        "Not verified in this environment (Cursor not installed)."
+      ],
+      "docs": "https://docs.cursor.com/context/rules"
+    },
+    {
+      "id": "github-copilot",
+      "name": "GitHub Copilot",
+      "adapter": "copilot",
+      "supportLevel": "instructions",
+      "evidence": "documented",
+      "scopes": ["project"],
+      "features": ["instructions"],
+      "paths": {
+        "project": ".github/instructions/<skillId>.instructions.md"
+      },
+      "detect": [".github", ".github/copilot-instructions.md"],
+      "format": "instructions-md",
+      "limitations": [
+        "Copilot reads .github/copilot-instructions.md and per-path *.instructions.md files with applyTo frontmatter.",
+        "No discrete skill discovery; the adapter writes one instruction file per skill.",
+        "Not verified in this environment."
+      ],
+      "docs": "https://docs.github.com/en/copilot/how-tos/configure-custom-instructions"
+    },
+    {
+      "id": "windsurf",
+      "name": "Windsurf",
+      "adapter": "windsurf",
+      "supportLevel": "rules",
+      "evidence": "documented",
+      "scopes": ["project", "user"],
+      "features": ["rules"],
+      "paths": {
+        "project": ".windsurf/rules/<skillId>.md",
+        "user": "~/.codeium/windsurf/memories/global_rules.md"
+      },
+      "detect": [".windsurf", "~/.codeium/windsurf"],
+      "format": "markdown-rules",
+      "limitations": [
+        "Windsurf rules are markdown documents with activation metadata.",
+        "User-level rules are aggregated into a single global rules file; the adapter appends a managed block.",
+        "Not verified in this environment."
+      ],
+      "docs": "https://docs.windsurf.com/windsurf/cascade/memories"
+    },
+    {
+      "id": "cline",
+      "name": "Cline",
+      "adapter": "cline",
+      "supportLevel": "rules",
+      "evidence": "documented",
+      "scopes": ["project"],
+      "features": ["rules"],
+      "paths": {
+        "project": ".clinerules/<skillId>.md"
+      },
+      "detect": [".clinerules"],
+      "format": "markdown-rules",
+      "limitations": [
+        "Cline reads the .clinerules directory (or a single .clinerules file) as rule context.",
+        "Not verified in this environment."
+      ],
+      "docs": "https://docs.cline.bot/features/cline-rules"
+    },
+    {
+      "id": "roo-code",
+      "name": "Roo Code",
+      "adapter": "roo-code",
+      "supportLevel": "rules",
+      "evidence": "documented",
+      "scopes": ["project"],
+      "features": ["rules"],
+      "paths": {
+        "project": ".roo/rules/<skillId>.md"
+      },
+      "detect": [".roo", ".roorules"],
+      "format": "markdown-rules",
+      "limitations": [
+        "Roo Code reads .roo/rules/ (and .roo/rules-<mode>/ for mode-specific rules).",
+        "Not verified in this environment."
+      ],
+      "docs": "https://docs.roocode.com/features/custom-instructions"
+    },
+    {
+      "id": "gemini-cli",
+      "name": "Gemini CLI",
+      "adapter": "gemini-cli",
+      "supportLevel": "instructions",
+      "evidence": "documented",
+      "scopes": ["project", "user"],
+      "features": ["instructions"],
+      "paths": {
+        "project": "GEMINI.md",
+        "user": "~/.gemini/GEMINI.md"
+      },
+      "detect": ["GEMINI.md", "~/.gemini"],
+      "format": "aggregated-instructions",
+      "limitations": [
+        "Gemini CLI reads hierarchical GEMINI.md context files; there is no discrete skill mechanism.",
+        "The adapter maintains a delimited managed block inside GEMINI.md so uninstall removes only its own content.",
+        "Not verified in this environment."
+      ],
+      "docs": "https://github.com/google-gemini/gemini-cli"
+    },
+    {
+      "id": "continue",
+      "name": "Continue",
+      "adapter": "continue",
+      "supportLevel": "rules",
+      "evidence": "documented",
+      "scopes": ["project", "user"],
+      "features": ["rules"],
+      "paths": {
+        "project": ".continue/rules/<skillId>.md",
+        "user": "~/.continue/rules/<skillId>.md"
+      },
+      "detect": [".continue", "~/.continue"],
+      "format": "markdown-rules",
+      "limitations": [
+        "Continue reads markdown rule files from .continue/rules/.",
+        "The ~/.continue directory was observed locally, but rule-file discovery was not exhaustively verified.",
+        "Not fully verified in this environment."
+      ],
+      "docs": "https://docs.continue.dev/customize/deep-dives/rules"
+    },
+    {
+      "id": "opencode",
+      "name": "OpenCode",
+      "adapter": "opencode",
+      "supportLevel": "instructions",
+      "evidence": "documented",
+      "scopes": ["project", "user"],
+      "features": ["instructions"],
+      "paths": {
+        "project": "AGENTS.md",
+        "user": "~/.config/opencode/AGENTS.md"
+      },
+      "detect": ["AGENTS.md", ".opencode", "~/.config/opencode"],
+      "format": "aggregated-instructions",
+      "limitations": [
+        "OpenCode reads AGENTS.md project instructions.",
+        "The adapter maintains a delimited managed block inside AGENTS.md.",
+        "Not verified in this environment."
+      ],
+      "docs": "https://opencode.ai/docs/rules/"
+    },
+    {
+      "id": "universal",
+      "name": "Universal Markdown",
+      "adapter": "universal",
+      "supportLevel": "instructions",
+      "evidence": "documented",
+      "scopes": ["project"],
+      "features": ["instructions"],
+      "paths": {
+        "project": "AGENTS.md"
+      },
+      "detect": ["AGENTS.md"],
+      "format": "aggregated-instructions",
+      "limitations": [
+        "Fallback for agents and workflows that read the AGENTS.md convention.",
+        "Content is aggregated into a managed block; it is not a discrete skill.",
+        "This is an interoperability convention, not a guarantee that any specific agent reads it."
+      ],
+      "docs": "https://agents.md"
+    }
+  ]
+}

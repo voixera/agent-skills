@@ -1,0 +1,120 @@
+{
+  "$schema": "./schema/presets.schema.json",
+  "version": "1.0.0",
+  "updated": "2026-02-14",
+  "notes": [
+    "Presets reference skill ids defined in skills.json.",
+    "Every preset reference is validated at load time; an unknown id is a hard error.",
+    "Presets are starting points. Users may add or remove skills before installing."
+  ],
+  "presets": [
+    {
+      "id": "frontend-developer",
+      "name": "Frontend Developer",
+      "description": "Building and maintaining frontend applications with attention to accessibility, responsiveness, performance, and design consistency.",
+      "skills": [
+        "frontend-architecture",
+        "react-best-practices",
+        "responsive-design",
+        "accessibility-a11y",
+        "design-system",
+        "frontend-performance",
+        "unit-testing",
+        "anti-slop-review"
+      ]
+    },
+    {
+      "id": "backend-developer",
+      "name": "Backend Developer",
+      "description": "Designing and maintaining backend services, APIs, and data layers with security and correctness in mind.",
+      "skills": [
+        "api-design",
+        "database-design",
+        "authentication-authorization",
+        "secure-backend",
+        "backend-architecture",
+        "integration-engineering",
+        "backend-performance",
+        "unit-testing",
+        "integration-testing"
+      ]
+    },
+    {
+      "id": "full-stack-developer",
+      "name": "Full-Stack Developer",
+      "description": "Working across frontend and backend with a balanced emphasis on quality, security, and testing.",
+      "skills": [
+        "frontend-architecture",
+        "react-best-practices",
+        "responsive-design",
+        "accessibility-a11y",
+        "ui-ux-design",
+        "api-design",
+        "database-design",
+        "authentication-authorization",
+        "secure-backend",
+        "unit-testing",
+        "integration-testing",
+        "documentation",
+        "anti-slop-review"
+      ]
+    },
+    {
+      "id": "creative-developer",
+      "name": "Creative Developer",
+      "description": "Building visually distinctive interfaces and original vector graphics with deliberate design decisions.",
+      "skills": [
+        "ui-ux-design",
+        "design-system",
+        "anti-generic-ui",
+        "svg-craft",
+        "custom-illustration",
+        "icon-design",
+        "animation-and-interaction",
+        "responsive-design",
+        "accessibility-a11y"
+      ]
+    },
+    {
+      "id": "svg-specialist",
+      "name": "SVG Specialist",
+      "description": "Producing, reviewing, optimizing, and hardening SVG assets end to end.",
+      "skills": [
+        "svg-craft",
+        "custom-illustration",
+        "icon-design",
+        "logo-mark-design",
+        "svg-optimization",
+        "svg-accessibility",
+        "svg-security",
+        "svg-visual-review"
+      ]
+    },
+    {
+      "id": "security-focused",
+      "name": "Security-Focused Developer",
+      "description": "Reviewing and hardening applications against common web and backend security weaknesses.",
+      "skills": [
+        "secure-coding",
+        "authentication-authorization",
+        "secure-backend",
+        "owasp-review",
+        "dependency-auditing",
+        "threat-modeling",
+        "authorization-review",
+        "regression-review"
+      ]
+    },
+    {
+      "id": "minimal",
+      "name": "Minimal Setup",
+      "description": "A small core of broadly useful skills for general-purpose work.",
+      "skills": [
+        "code-review",
+        "anti-slop-review",
+        "debugging-root-cause",
+        "documentation"
+      ]
+    }
+  ]
+}
