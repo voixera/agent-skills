@@ -215,6 +215,28 @@
       "docs": "https://opencode.ai/docs/rules/"
     },
     {
+      "id": "hermes",
+      "name": "Hermes (Nous Research)",
+      "adapter": "hermes",
+      "supportLevel": "native",
+      "evidence": "documented",
+      "scopes": ["project", "user"],
+      "features": ["skills"],
+      "paths": {
+        "project": ".hermes/skills/<skillId>/SKILL.md",
+        "user": "~/.hermes/skills/<skillId>/SKILL.md"
+      },
+      "detect": [".hermes", ".agents", "~/.hermes"],
+      "format": "skill-md",
+      "limitations": [
+        "Hermes discovers SKILL.md files under its skills directory (agentskills.io-compatible).",
+        "User skills live in ~/.hermes/skills/; project skills live in <project>/.hermes/skills/ (Hermes scans .agents/skills/ too).",
+        "Project skills are not auto-loaded until the repo is trusted with `hermes skills trust`.",
+        "Not verified against a real Hermes installation in this environment."
+      ],
+      "docs": "https://hermes-agent.nousresearch.com/docs/user-guide/features/skills"
+    },
+    {
       "id": "universal",
       "name": "Universal Markdown",
       "adapter": "universal",

@@ -17,7 +17,20 @@
       "category": "frontend",
       "version": "1.0.0",
       "path": "skills/frontend/frontend-architecture/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -28,8 +41,23 @@
       "category": "frontend",
       "version": "1.0.0",
       "path": "skills/frontend/react-best-practices/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["frontend-architecture"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "frontend-architecture"
+      ],
       "tools": []
     },
     {
@@ -39,7 +67,20 @@
       "category": "frontend",
       "version": "1.0.0",
       "path": "skills/frontend/responsive-design/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -50,9 +91,25 @@
       "category": "frontend",
       "version": "1.0.0",
       "path": "skills/frontend/accessibility-a11y/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
-      "tools": ["axe", "eslint-plugin-jsx-a11y"]
+      "tools": [
+        "axe",
+        "eslint-plugin-jsx-a11y"
+      ]
     },
     {
       "id": "frontend-performance",
@@ -61,9 +118,24 @@
       "category": "frontend",
       "version": "1.0.0",
       "path": "skills/frontend/frontend-performance/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
-      "tools": ["lighthouse"]
+      "tools": [
+        "lighthouse"
+      ]
     },
     {
       "id": "design-system",
@@ -72,7 +144,20 @@
       "category": "frontend",
       "version": "1.0.0",
       "path": "skills/frontend/design-system/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -83,8 +168,23 @@
       "category": "frontend",
       "version": "1.0.0",
       "path": "skills/frontend/frontend-form-engineering/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["accessibility-a11y"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "accessibility-a11y"
+      ],
       "tools": []
     },
     {
@@ -94,8 +194,23 @@
       "category": "frontend",
       "version": "1.0.0",
       "path": "skills/frontend/animation-and-interaction/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["accessibility-a11y"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "accessibility-a11y"
+      ],
       "tools": []
     },
     {
@@ -105,7 +220,20 @@
       "category": "backend",
       "version": "1.0.0",
       "path": "skills/backend/api-design/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -116,7 +244,20 @@
       "category": "backend",
       "version": "1.0.0",
       "path": "skills/backend/database-design/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -127,7 +268,20 @@
       "category": "backend",
       "version": "1.0.0",
       "path": "skills/backend/authentication-authorization/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -138,8 +292,23 @@
       "category": "backend",
       "version": "1.0.0",
       "path": "skills/backend/secure-backend/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["data-validation-and-integrity"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "data-validation-and-integrity"
+      ],
       "tools": []
     },
     {
@@ -149,7 +318,20 @@
       "category": "backend",
       "version": "1.0.0",
       "path": "skills/backend/backend-architecture/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -160,7 +342,20 @@
       "category": "backend",
       "version": "1.0.0",
       "path": "skills/backend/integration-engineering/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -171,8 +366,23 @@
       "category": "backend",
       "version": "1.0.0",
       "path": "skills/backend/backend-performance/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["database-design"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "database-design"
+      ],
       "tools": []
     },
     {
@@ -182,7 +392,20 @@
       "category": "backend",
       "version": "1.0.0",
       "path": "skills/backend/data-validation-and-integrity/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -193,7 +416,20 @@
       "category": "ui-ux",
       "version": "1.0.0",
       "path": "skills/ui-ux/ui-ux-design/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -204,8 +440,23 @@
       "category": "ui-ux",
       "version": "1.0.0",
       "path": "skills/ui-ux/anti-generic-ui/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["ui-ux-design"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "ui-ux-design"
+      ],
       "tools": []
     },
     {
@@ -215,8 +466,23 @@
       "category": "ui-ux",
       "version": "1.0.0",
       "path": "skills/ui-ux/design-from-reference/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["ui-ux-design"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "ui-ux-design"
+      ],
       "tools": []
     },
     {
@@ -226,8 +492,23 @@
       "category": "ui-ux",
       "version": "1.0.0",
       "path": "skills/ui-ux/microinteractions/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["accessibility-a11y"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "accessibility-a11y"
+      ],
       "tools": []
     },
     {
@@ -237,7 +518,20 @@
       "category": "svg",
       "version": "1.0.0",
       "path": "skills/svg/svg-craft/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -248,8 +542,23 @@
       "category": "svg",
       "version": "1.0.0",
       "path": "skills/svg/custom-illustration/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["svg-craft"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "svg-craft"
+      ],
       "tools": []
     },
     {
@@ -259,8 +568,23 @@
       "category": "svg",
       "version": "1.0.0",
       "path": "skills/svg/icon-design/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["svg-craft"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "svg-craft"
+      ],
       "tools": []
     },
     {
@@ -270,8 +594,23 @@
       "category": "svg",
       "version": "1.0.0",
       "path": "skills/svg/logo-mark-design/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["svg-craft"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "svg-craft"
+      ],
       "tools": []
     },
     {
@@ -281,9 +620,24 @@
       "category": "svg",
       "version": "1.0.0",
       "path": "skills/svg/svg-optimization/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
-      "tools": ["svgo"]
+      "tools": [
+        "svgo"
+      ]
     },
     {
       "id": "svg-accessibility",
@@ -292,7 +646,20 @@
       "category": "svg",
       "version": "1.0.0",
       "path": "skills/svg/svg-accessibility/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -303,7 +670,20 @@
       "category": "svg",
       "version": "1.0.0",
       "path": "skills/svg/svg-security/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -314,8 +694,23 @@
       "category": "svg",
       "version": "1.0.0",
       "path": "skills/svg/svg-visual-review/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["svg-craft"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "svg-craft"
+      ],
       "tools": []
     },
     {
@@ -325,7 +720,20 @@
       "category": "testing",
       "version": "1.0.0",
       "path": "skills/testing/unit-testing/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -336,8 +744,23 @@
       "category": "testing",
       "version": "1.0.0",
       "path": "skills/testing/integration-testing/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["unit-testing"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "unit-testing"
+      ],
       "tools": []
     },
     {
@@ -347,9 +770,25 @@
       "category": "testing",
       "version": "1.0.0",
       "path": "skills/testing/e2e-testing/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
-      "tools": ["playwright", "cypress"]
+      "tools": [
+        "playwright",
+        "cypress"
+      ]
     },
     {
       "id": "debugging-root-cause",
@@ -358,7 +797,20 @@
       "category": "testing",
       "version": "1.0.0",
       "path": "skills/testing/debugging-root-cause/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -369,8 +821,23 @@
       "category": "testing",
       "version": "1.0.0",
       "path": "skills/testing/regression-review/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["unit-testing"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "unit-testing"
+      ],
       "tools": []
     },
     {
@@ -380,7 +847,20 @@
       "category": "security",
       "version": "1.0.0",
       "path": "skills/security/secure-coding/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -391,7 +871,20 @@
       "category": "security",
       "version": "1.0.0",
       "path": "skills/security/owasp-review/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -402,9 +895,25 @@
       "category": "security",
       "version": "1.0.0",
       "path": "skills/security/dependency-auditing/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
-      "tools": ["npm", "pip-audit"]
+      "tools": [
+        "npm",
+        "pip-audit"
+      ]
     },
     {
       "id": "secret-management",
@@ -413,7 +922,20 @@
       "category": "security",
       "version": "1.0.0",
       "path": "skills/security/secret-management/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -424,8 +946,23 @@
       "category": "security",
       "version": "1.0.0",
       "path": "skills/security/authorization-review/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["authentication-authorization"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "authentication-authorization"
+      ],
       "tools": []
     },
     {
@@ -435,7 +972,20 @@
       "category": "security",
       "version": "1.0.0",
       "path": "skills/security/threat-modeling/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -446,7 +996,20 @@
       "category": "security",
       "version": "1.0.0",
       "path": "skills/security/secure-file-handling/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -457,7 +1020,20 @@
       "category": "security",
       "version": "1.0.0",
       "path": "skills/security/safe-error-handling/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -468,9 +1044,24 @@
       "category": "devops",
       "version": "1.0.0",
       "path": "skills/devops/git-workflow/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
-      "tools": ["git"]
+      "tools": [
+        "git"
+      ]
     },
     {
       "id": "pull-request-review",
@@ -479,9 +1070,26 @@
       "category": "devops",
       "version": "1.0.0",
       "path": "skills/devops/pull-request-review/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["code-review"],
-      "tools": ["gh"]
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "code-review"
+      ],
+      "tools": [
+        "gh"
+      ]
     },
     {
       "id": "docker",
@@ -490,9 +1098,24 @@
       "category": "devops",
       "version": "1.0.0",
       "path": "skills/devops/docker/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
-      "tools": ["docker"]
+      "tools": [
+        "docker"
+      ]
     },
     {
       "id": "ci-cd",
@@ -501,7 +1124,20 @@
       "category": "devops",
       "version": "1.0.0",
       "path": "skills/devops/ci-cd/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -512,8 +1148,23 @@
       "category": "devops",
       "version": "1.0.0",
       "path": "skills/devops/environment-config/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["secret-management"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "secret-management"
+      ],
       "tools": []
     },
     {
@@ -523,7 +1174,20 @@
       "category": "devops",
       "version": "1.0.0",
       "path": "skills/devops/deployment-readiness/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -534,8 +1198,23 @@
       "category": "devops",
       "version": "1.0.0",
       "path": "skills/devops/observability/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["safe-error-handling"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "safe-error-handling"
+      ],
       "tools": []
     },
     {
@@ -545,8 +1224,23 @@
       "category": "devops",
       "version": "1.0.0",
       "path": "skills/devops/migration-review/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["database-design"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "database-design"
+      ],
       "tools": []
     },
     {
@@ -556,7 +1250,20 @@
       "category": "devops",
       "version": "1.0.0",
       "path": "skills/devops/dependency-management/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -567,8 +1274,23 @@
       "category": "devops",
       "version": "1.0.0",
       "path": "skills/devops/release-notes/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["documentation"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "documentation"
+      ],
       "tools": []
     },
     {
@@ -578,7 +1300,20 @@
       "category": "anti-slop",
       "version": "1.0.0",
       "path": "skills/anti-slop/task-planning/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -589,7 +1324,20 @@
       "category": "anti-slop",
       "version": "1.0.0",
       "path": "skills/anti-slop/code-review/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -600,7 +1348,20 @@
       "category": "anti-slop",
       "version": "1.0.0",
       "path": "skills/anti-slop/documentation/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
       "depends": [],
       "tools": []
     },
@@ -611,8 +1372,23 @@
       "category": "anti-slop",
       "version": "1.0.0",
       "path": "skills/anti-slop/anti-slop-review/SKILL.md",
-      "agents": ["codex", "claude-code", "cursor", "github-copilot", "windsurf", "cline", "roo-code", "gemini-cli", "continue", "opencode", "universal"],
-      "depends": ["code-review"],
+      "agents": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "github-copilot",
+        "windsurf",
+        "cline",
+        "roo-code",
+        "gemini-cli",
+        "continue",
+        "opencode",
+        "hermes",
+        "universal"
+      ],
+      "depends": [
+        "code-review"
+      ],
       "tools": []
     }
   ]

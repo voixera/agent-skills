@@ -1,71 +1,100 @@
-![Agent Skills](docs/assets/AgentSkills.png)
-
 # Agent Skills
 
-**Multi-Agent Skills Manager & Anti-Slop Engineering Toolkit.**
+**Multi-agent skills manager and anti-slop engineering toolkit.**
 
-Agent Skills is a modular toolkit that installs reusable, high-quality **skill
-packs** into supported AI coding agents. The goal is to reduce preventable
-quality problems in AI-assisted work — generic UI, brittle tests, missing edge
-cases, unsafe defaults, and hand-waved SVG — through actionable instructions,
-deterministic checks, and transparent validation results.
+One command installs a curated set of engineering rules into your AI coding
+agents - so they write better frontend, backend, tests, security, and SVG
+instead of generic, same-as-everything output.
 
-> **Honest scope.** This project does not make an AI infallible and does not
-> eliminate "AI slop". It reduces a specific class of preventable problems using
-> explicit instructions, deterministic validators, and clearly reported limits.
-> We never claim a check passed unless it actually ran.
+```bash
+npx agentskillsmd
+```
 
-## Table of contents
+![Agent Skills installer](docs/assets/AgentSkills.png)
 
-- [Problems addressed](#problems-addressed)
-- [Features](#features)
-- [Supported agents](#supported-agents)
-- [Quick start](#quick-start)
-- [Installation](#installation)
-- [Menu reference](#menu-reference)
-- [Skill catalog](#skill-catalog)
-- [Presets](#presets)
-- [SVG Craft Pro](#svg-craft-pro)
-- [Quality checker](#quality-checker)
-- [Security model](#security-model)
-- [Updating and uninstalling](#updating-and-uninstalling)
-- [Repository layout](#repository-layout)
-- [Contributing](#contributing)
-- [Troubleshooting](#troubleshooting)
-- [Testing](#testing)
-- [Known limitations](#known-limitations)
-- [Roadmap](#roadmap)
-- [License](#license)
+<!-- Badges: fill in the npm/CI links once published. -->
 
-## Problems addressed
+## Why
 
-- **Generic, templated output.** Agents default to the same hero sections,
-  gradients, and floating cards regardless of the brief.
-- **Missing states.** Loading, empty, error, and disabled states are forgotten
+AI coding agents are fast but sloppy in predictable ways. Agent Skills fights
+that with **explicit, testable rules** - not vibes:
+
+- **Generic UI** - the same hero sections, gradients, and floating cards no
+  matter the brief.
+- **Missing states** - loading, empty, error, and disabled states forgotten
   until they cause a bug.
-- **Weak boundaries.** Validation is scattered, authorization is client-only,
-  and secrets leak into logs.
-- **Brittle tests.** Tests assert implementation details and are edited to hide
+- **Weak boundaries** - validation scattered, authorization client-only, secrets
+  in logs.
+- **Brittle tests** - asserting implementation details, then edited to hide
   failures.
-- **Hand-waved SVG.** Vector graphics are "syntactically valid" but clipped,
-  inaccessible, insecure, or visually incoherent.
-- **Tool sprawl.** Every agent has a different file format and location, so the
-  same guidance is copied by hand and drifts.
+- **Hand-waved SVG** - "syntactically valid" but clipped, inaccessible, unsafe,
+  or visually incoherent.
 
-## Features
+> **Honest scope.** This does not make an AI infallible and does not eliminate
+> "AI slop". It reduces a specific class of *preventable* problems with explicit
+> instructions, deterministic checks, and clearly reported limits. No check is
+> ever reported as passed unless it actually ran.
 
-- **Modular skill packs** — 55 focused skills across 8 categories.
-- **Canonical source, per-agent adapters** — one `SKILL.md` format, transformed
-  into each agent's native shape. Adapters never blindly copy files.
-- **Multi-agent, multi-scope installer** — project or user scope, preview,
-  conflict detection, backups, and a manifest.
-- **Safe by default** — refuses to overwrite untracked files without `-Force`;
-  uninstall only removes files the tool created.
-- **Deterministic validation** — registry schema checks, skill metadata,
-  broken references, dependency cycles, and a five-stage SVG validator.
-- **Idempotent** — reinstalling the same skills reports "unchanged" and writes
-  nothing.
-- **Offline** — everything runs from a local checkout. No paid API, no network.
+## Quick start
+
+Run it in an interactive terminal. It opens the installer immediately - there is
+no subcommand to type.
+
+```bash
+npx agentskillsmd
+```
+
+```text
+   █████╗  ██████╗ ███████╗███╗   ██╗████████╗  ███████╗██╗  ██╗██╗██╗     ██╗     ███████╗
+  ██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝  ██╔════╝██║ ██╔╝██║██║     ██║     ██╔════╝
+  ███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║     ███████╗█████╔╝ ██║██║     ██║     ███████╗
+  ██╔══██║██║   ██║██╔══╝  ██║╚██╗██║   ██║     ╚════██║██╔═██╗ ██║██║     ██║     ╚════██║
+  ██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║     ███████║██║  ██╗██║███████╗███████╗███████║
+
+  Anti-slop rules for AI coding agents.
+  Multi-agent skills manager  •  v2.0.0
+  55 skills  •  12 agents  •  7 presets
+
+? What would you like to do?
+❯ Install skills into your agent setup
+  Uninstall skills
+  Exit
+```
+
+Then walk through the wizard:
+
+1. **Agents** - multi-select; support level and evidence shown.
+2. **Skills** - pick a preset (it preselects its skills), then customise.
+3. **Preview** - files to create/update, conflicts, dependencies. Nothing is
+   written until you confirm.
+4. **Install** - real progress for real work.
+5. **Complete** - an accurate report.
+
+Skills are always installed into the current project. **Uninstall** lists the
+skills currently installed so you can pick which to remove.
+
+**Keys:** `↑`/`↓` move, `space` toggles, `a` toggles all, `enter` confirms,
+`esc` goes back, `ctrl+c` quits safely. No mouse required.
+
+### Requirements
+
+- **Node.js 18+** - provides `npx` and runs the TUI.
+- An interactive terminal (Windows Terminal, PowerShell, CMD, macOS/Linux).
+
+That is the entire requirement list - no PowerShell, Python, or other runtime.
+
+## What it does
+
+- **Writes instruction files, nothing else.** The installer only creates
+  instruction/config files and a manifest; it never executes skill content.
+- **Never overwrites your files silently.** A destination that exists but was
+  not created by Agent Skills is refused; you can overwrite explicitly, and a
+  backup is taken first.
+- **Uninstalls cleanly.** Only files recorded in the manifest are removed. For
+  shared instruction files it removes only its own managed block.
+- **Idempotent.** Re-running reports "unchanged" and writes nothing.
+- **Validates up front.** The registry is checked (schema, references,
+  dependency cycles) before the menu appears.
 
 ## Supported agents
 
@@ -81,283 +110,84 @@ deterministic checks, and transparent validation results.
 | Gemini CLI | `gemini-cli` | instructions | documented | project, user |
 | Continue | `continue` | rules | documented | project, user |
 | OpenCode | `opencode` | instructions | documented | project, user |
+| Hermes (Nous Research) | `hermes` | native | documented | project, user |
 | Universal Markdown | `universal` | instructions | documented | project |
 
-**Support level** describes how the agent discovers skills:
-
-- **native** — first-class discrete skill discovery (`<dir>/<skillId>/SKILL.md`).
-- **rules** — the agent reads per-file rule documents, not discrete skills.
-- **instructions** — the agent reads a single aggregated instruction file; skills
-  are merged into a delimited managed block.
-
-**Evidence** is either `verified` (the path/format was observed in a real
-installation in the authoring environment) or `documented` (based on vendor
-documentation, not verified locally). See [docs/supported-agents.md](docs/supported-agents.md).
-
-## Quick start
-
-Run this in an interactive terminal - it opens the installer immediately. There
-is **no subcommand to type**:
-
-```bash
-npx agentskillsmd
-```
-
-You get a guided TUI: a large logo, then keyboard-driven screens where you
-*choose* agents and skill packs.
-
-```text
-                                       ___                   ___                ___   ___              
-                                      (   )                 (   )         .-.  (   ) (   )             
-  .---.    .--.     .--.    ___ .-.    | |_         .--.     | |   ___   ( __)  | |   | |      .--.    
- / .-, \  /    \   /    \  (   )   \  (   __)     /  _  \    | |  (   )  (''")  | |   | |    /  _  \   
-(__) ; | ;  ,-. ' |  .-. ;  |  .-. .   | |       . .' `. ;   | |  ' /     | |   | |   | |   . .' `. ;  
-  .'`  | | |  | | |  | | |  | |  | |   | | ___   | '   | |   | |,' /      | |   | |   | |   | '   | |  
- / .'| | | |  | | |  |/  |  | |  | |   | |(   )  _\_`.(___)  | .  '.      | |   | |   | |   _\_`.(___) 
-| /  | | | |  | | |  ' _.'  | |  | |   | | | |  (   ). '.    | | `. \     | |   | |   | |  (   ). '.   
-; |  ; | | '  | | |  .'.-.  | |  | |   | ' | |   | |  `\ |   | |   \ \    | |   | |   | |   | |  `\ |  
-' `-'  | '  `-' | '  `-' /  | |  | |   ' `-' ;   ; '._,' '   | |    \ .   | |   | |   | |   ; '._,' '  
-`.__.'_.  `.__. |  `.__.'  (___)(___)   `.__.     '.___.'   (___ ) (___) (___) (___) (___)   '.___.'   
-          ( `-' ;                                                                                      
-           `.__.                                                                                       
-
-  AGENT SKILLS  v1.1.0
-  Multi-agent skills manager and anti-slop engineering toolkit.
-  55 skills  •  11 agents  •  7 presets
-
-? What would you like to do?
-❯ Start installation
-  Verify installed skills
-  Update installed skills
-  Uninstall skills
-  Exit
-```
-
-### The flow
-
-1. **Welcome / menu** - logo, version, and the actions below.
-2. **Scope** - this project, your user profile, or a custom path (each explained).
-3. **Agents** - multi-select with support level and evidence shown
-   (`verified` / `documented`).
-4. **Skills** - pick a preset (it preselects its skills), then customise;
-   presets are never locked.
-5. **Preview** - agents, skills, scope, files to create/update, conflicts, and
-   dependencies. Nothing is written until you confirm.
-6. **Install** - real progress for real work (resolve, write, manifest, verify).
-7. **Complete** - an accurate report, then back to the menu.
-
-Verify, update, and uninstall are also on the main menu - there is nothing to
-type.
-
-**Keys:** `↑`/`↓` navigate, `space` toggles, `a` toggles all, `enter` confirms,
-`esc` goes back, `ctrl+c` quits safely. No mouse required.
-
-> **Terminal support.** Built with `@inquirer/prompts`; works in Windows Terminal,
-> PowerShell, CMD, and other ANSI-capable terminals. If no colour is available,
-> output degrades to plain text. In a **non-interactive** shell (piped input) it
-> prints a short notice telling you to run it in a terminal, instead of hanging.
->
-> **Requirements:** [Node.js](https://nodejs.org) 18+. That is the only
-> requirement - there is no PowerShell or other runtime dependency.
-
-## Installation
-
-Agent Skills installs through a single command:
-
-```bash
-npx agentskillsmd
-```
-
-### Requirements
-
-- **Node.js 18+** - provides the `npx` command and runs the TUI.
-- No administrator rights are required for **project**-scope installs.
-
-### What the launcher does
-
-`npx agentskillsmd` runs a single Node.js/TypeScript program. It renders the TUI
-and performs the installation in-process - there is no external engine:
-
-- The **TUI** (`src/tui`, `src/cli`) drives the screens and collects your choices.
-- The **core** (`src/core`) reads the registry, builds a dry-run plan, writes the
-  skill files and manifest, makes backups, and verifies. It never touches files it
-  did not create.
-
-Running with no arguments launches the interactive installer. There are no
-subcommands.
-
-### Scopes
-
-| Scope | Writes to | Typical use |
-| --- | --- | --- |
-| `project` | The project directory (default: current) | Commit skills alongside the code. |
-| `user` | Your home configuration for each agent | Apply the same skills everywhere. |
-
-## Menu reference
-
-There are no subcommands. Everything is reached from the main menu after
-`npx agentskillsmd`:
-
-| Menu option | Description |
-| --- | --- |
-| Start installation | Choose scope, agents, and skills, preview, then install. |
-| Verify installed skills | Check installed files against the manifest. |
-| Update installed skills | Re-apply everything the manifest says is installed. |
-| Uninstall skills | Remove files Agent Skills created (nothing else is touched). |
-| Exit | Quit. |
-
-**Keys**
-
-| Key | Action |
-| --- | --- |
-| `↑` / `↓` | Move the selection |
-| `space` | Toggle a checkbox |
-| `a` | Toggle all (multi-select lists) |
-| `enter` | Confirm |
-| `esc` | Go back |
-| `ctrl+c` | Quit safely |
+- **Support level** - how the agent discovers skills: `native` (discrete
+  `SKILL.md`), `rules` (per-file rule documents), or `instructions` (one
+  aggregated file with a managed block).
+- **Evidence** - `verified` means the path/format was observed in a real
+  installation; `documented` means it comes from vendor docs and was not tested
+  locally. Only Codex and Claude Code are `verified`. See
+  [docs/supported-agents.md](docs/supported-agents.md).
 
 ## Skill catalog
 
-### frontend
+**55 skills across 8 categories.** Every skill has one responsibility, concrete
+steps, quality criteria, anti-patterns, and a validation strategy.
 
-- `frontend-architecture` — Frontend Architecture
-- `react-best-practices` — React Best Practices
-- `responsive-design` — Responsive Design
-- `accessibility-a11y` — Accessibility (a11y)
-- `frontend-performance` — Frontend Performance
-- `design-system` — Design System
-- `frontend-form-engineering` — Frontend Form Engineering
-- `animation-and-interaction` — Animation and Interaction
-
-### backend
-
-- `api-design` — API Design
-- `database-design` — Database Design
-- `authentication-authorization` — Authentication and Authorization
-- `secure-backend` — Secure Backend
-- `backend-architecture` — Backend Architecture
-- `integration-engineering` — Integration Engineering
-- `backend-performance` — Backend Performance
-- `data-validation-and-integrity` — Data Validation and Integrity
-
-### ui-ux
-
-- `ui-ux-design` — UI/UX Design
-- `anti-generic-ui` — Anti-Generic UI
-- `design-from-reference` — Design From Reference
-- `microinteractions` — Microinteractions
-
-### svg
-
-- `svg-craft` — SVG Craft
-- `custom-illustration` — Custom Illustration
-- `icon-design` — Icon Design
-- `logo-mark-design` — Logo Mark Design
-- `svg-optimization` — SVG Optimization
-- `svg-accessibility` — SVG Accessibility
-- `svg-security` — SVG Security
-- `svg-visual-review` — SVG Visual Review
-
-### testing
-
-- `unit-testing` — Unit Testing
-- `integration-testing` — Integration Testing
-- `e2e-testing` — End-to-End Testing
-- `debugging-root-cause` — Debugging and Root Cause Analysis
-- `regression-review` — Regression Review
-
-### security
-
-- `secure-coding` — Secure Coding
-- `owasp-review` — OWASP-Oriented Web Security Review
-- `dependency-auditing` — Dependency Auditing
-- `secret-management` — Secret Management
-- `authorization-review` — Authorization Review
-- `threat-modeling` — Threat Modeling
-- `secure-file-handling` — Secure File Handling
-- `safe-error-handling` — Safe Error Handling
-
-### devops
-
-- `git-workflow` — Git Workflow
-- `pull-request-review` — Pull Request Review
-- `docker` — Docker and Containers
-- `ci-cd` — CI/CD
-- `environment-config` — Environment Configuration
-- `deployment-readiness` — Deployment Readiness
-- `observability` — Logging and Observability
-- `migration-review` — Database Migration Review
-- `dependency-management` — Dependency Management
-- `release-notes` — Release Notes
-
-### anti-slop
-
-- `task-planning` — Task Planning
-- `code-review` — Code Review
-- `documentation` — Technical Documentation
-- `anti-slop-review` — Anti-Slop Review
+| Category | Count | Skills |
+| --- | --- | --- |
+| frontend | 8 | frontend-architecture, react-best-practices, responsive-design, accessibility-a11y, frontend-performance, design-system, frontend-form-engineering, animation-and-interaction |
+| backend | 8 | api-design, database-design, authentication-authorization, secure-backend, backend-architecture, integration-engineering, backend-performance, data-validation-and-integrity |
+| ui-ux | 4 | ui-ux-design, anti-generic-ui, design-from-reference, microinteractions |
+| svg | 8 | svg-craft, custom-illustration, icon-design, logo-mark-design, svg-optimization, svg-accessibility, svg-security, svg-visual-review |
+| testing | 5 | unit-testing, integration-testing, e2e-testing, debugging-root-cause, regression-review |
+| security | 8 | secure-coding, owasp-review, dependency-auditing, secret-management, authorization-review, threat-modeling, secure-file-handling, safe-error-handling |
+| devops | 10 | git-workflow, pull-request-review, docker, ci-cd, environment-config, deployment-readiness, observability, migration-review, dependency-management, release-notes |
+| anti-slop | 4 | task-planning, code-review, documentation, anti-slop-review |
 
 ## Presets
 
-| Preset | Description |
-| --- | --- |
-| `frontend-developer` | Frontend work with accessibility, responsiveness, performance, and design consistency. |
-| `backend-developer` | Backend services, APIs, and data layers with security and correctness. |
-| `full-stack-developer` | Frontend + backend + quality + security + testing. |
-| `creative-developer` | Distinctive interfaces and original vector graphics. |
-| `svg-specialist` | Produce, review, optimize, and harden SVG end to end. |
-| `security-focused` | Review and harden against common web and backend weaknesses. |
-| `minimal` | A small core of broadly useful skills. |
+Presets are starting points - selecting one preselects its skills, and you can
+still toggle individual skills.
 
-Every preset can be customized before installation; presets are starting points.
-All preset references are validated against the registry at load time.
+| Preset | Skills |
+| --- | --- |
+| `frontend-developer` | Architecture, React, responsive, a11y, design system, performance, unit testing, anti-slop review |
+| `backend-developer` | API design, database, auth, secure backend, architecture, integrations, performance, testing |
+| `full-stack-developer` | Frontend + backend + quality + security + testing + docs |
+| `creative-developer` | UI/UX, design system, anti-generic UI, SVG craft, illustration, icons, animation, responsive, a11y |
+| `svg-specialist` | The full SVG pipeline: craft, illustration, icons, logo, optimize, a11y, security, review |
+| `security-focused` | Secure coding, auth, secure backend, OWASP, dependency audit, threat modeling, authorization, regression |
+| `minimal` | A small core: code review, anti-slop review, debugging, documentation |
 
 ## SVG Craft Pro
 
-The SVG category is the project's signature feature: a complete pipeline for
-producing *and validating* vector graphics.
+The signature feature: a complete pipeline for producing *and validating* vector
+graphics. Eight skills plus a validator that reports **five independent stages**,
+so "it parses" is never confused with "it is safe" or "it looks right":
 
-It is a set of eight skills (`svg-craft`, `custom-illustration`, `icon-design`,
-`logo-mark-design`, `svg-optimization`, `svg-accessibility`, `svg-security`,
-`svg-visual-review`) plus a validator that reports **five independent stages**:
-
-1. **XML parse** — is it well-formed?
-2. **Security scan** — scripts, event handlers, external references, unsafe URL
-   schemes, `foreignObject`, DTD entities.
-3. **Accessibility** — accessible name (`title`/`aria-label`) or explicit
+1. **XML parse** - is it well-formed?
+2. **Security scan** - scripts, event handlers, external refs, unsafe URLs,
+   `foreignObject`, DTD entities.
+3. **Accessibility** - accessible name (`title`/`aria-label`) or explicit
    decorative marking.
-4. **Render** — only if a renderer is available (`rsvg-convert`, `inkscape`,
-   `magick`); otherwise reported as `SKIP` with a reason.
-5. **Visual review** — *never* performed automatically; always reported as not
-   done.
-
-An SVG is **not** "validated" just because it parses. The validator is available
-from the package API (`validateSvgFile` / `validateSvgText`). See
-[docs/svg-quality.md](docs/svg-quality.md).
+4. **Render** - only if a renderer is available; otherwise `SKIP` with a reason.
+5. **Visual review** - *never* automatic; always reported as not done.
 
 ```js
 const { validateSvgFile } = require('agentskillsmd/dist/core/core');
 console.log(validateSvgFile('./art/logo.svg', { render: true }));
 ```
 
+An SVG is **not** "validated" just because it parses. See
+[docs/svg-quality.md](docs/svg-quality.md).
+
 ## Quality checker
 
-The quality checker distinguishes objective failures from subjective design
-preferences and uses four statuses:
+Objective failures are separated from subjective design preferences. Checks use
+four statuses:
 
-- `PASS` — the check ran and succeeded.
-- `FAIL` — the check ran and found a real problem.
-- `WARN` — the check ran and found something to review.
-- `SKIP` — the check did not run; **a reason is always given**, and a skip is
-  never treated as a pass.
+- `PASS` - ran and succeeded.
+- `FAIL` - ran and found a real problem.
+- `WARN` - ran and found something to review.
+- `SKIP` - did not run; **a reason is always given**, and a skip is never a pass.
 
-Available checks include: registry schema validation, skill metadata validation,
-duplicate ids, missing files, broken references, dependency-cycle detection,
-preset resolution, adapter/format compatibility, and the SVG pipeline.
-
-The registry is validated automatically when the TUI starts, and can be checked
-from the command line:
+Covers registry schema, skill metadata, duplicate ids, missing files, broken
+references, dependency cycles, preset resolution, adapter/format compatibility,
+and the SVG pipeline. The registry is validated automatically when the TUI starts;
+you can also run it directly:
 
 ```bash
 npm run validate
@@ -365,52 +195,62 @@ npm run validate
 
 ## Security model
 
-- The installer **writes instruction and configuration files only**. It never
-  executes skill content.
-- No data is transmitted to any external service.
-- Writes are confined to the selected scope; a destination that escapes it is
-  refused.
-- Untracked files are never silently overwritten.
-- Uninstall only removes files recorded in the manifest, and preserves files
-  outside the managed block.
-- The repository must never contain secrets; CI includes a secret scan.
+- Writes **instruction and configuration files only**. Skill content is never
+  executed. Nothing is sent anywhere.
+- Writes are confined to the selected scope; a path that escapes it is refused.
+- Untracked files are never silently overwritten; uninstall never deletes files
+  it did not create.
+- The repository contains no secrets, and CI runs a secret scan.
 
-The SVG security scan is **pattern-based** and reduces risk; it is not a
-guarantee that an SVG is safe. It can produce false negatives. See
-[docs/security.md](docs/security.md) and the root [SECURITY.md](SECURITY.md).
+The SVG scan is **pattern-based** and reduces risk; it is not a guarantee. See
+[SECURITY.md](SECURITY.md) and [docs/security.md](docs/security.md).
 
-## Updating and uninstalling
+## Uninstalling
 
-Both are on the **main menu** - run `npx agentskillsmd` and choose the action:
+On the main menu:
 
 ```bash
 npx agentskillsmd
-# -> Verify installed skills
-# -> Update installed skills
 # -> Uninstall skills
 ```
 
-Under the hood these run the in-process TypeScript engine. Uninstall only removes
-files Agent Skills created (recorded in the manifest). For shared instruction
-files it removes only its own managed block, preserving the rest of the file.
+The uninstall screen lists the skills currently installed in the project so you
+can pick which to remove. Only files Agent Skills created are removed; for shared
+instruction files it removes only its own managed block, preserving the rest of
+the file. Backups of overwritten files live in `.agent-skills/backups/`.
+
+## Architecture
+
+The installer is a single Node.js/TypeScript program - no external engine.
+
+```text
+src/
+├── cli/         entry point (launches the TUI, non-TTY notice, Ctrl+C handling)
+├── tui/         screens + components (@inquirer/prompts)
+├── core/        registry, resolver, planner, engine, adapters, manifest, validate
+├── validators/  SVG validator
+└── types/       shared types
+```
+
+- The **TUI** (`src/tui`, `src/cli`) collects your choices and shows the plan.
+- The **core** (`src/core`) reads the registry, builds a dry-run plan, writes the
+  files and manifest, makes backups, and verifies. It never touches files it did
+  not create.
+- **Adapters** are data-driven by each agent's `format` field (`skill-md`,
+  `mdc-frontmatter`, `instructions-md`, `markdown-rules`,
+  `aggregated-instructions`), so a new agent that shares a format needs no code.
 
 ## Repository layout
 
 ```text
 agent-skills/
-|-- README.md, LICENSE, CONTRIBUTING.md, SECURITY.md, CHANGELOG.md, package.json
 |-- bin/                 agentskillsmd.js (npm executable)
-|-- src/
-|   |-- cli/             entry point (launches the TUI)
-|   |-- tui/             TUI app, screens, components
-|   |-- core/            registry, resolver, planner, engine, adapters, manifest
-|   |-- validators/      SVG validator
-|   \-- types/           shared TypeScript types
+|-- src/                 cli/, tui/, core/, validators/, types/
 |-- registry/            agents.json, skills.json, presets.json + schema/
 |-- skills/              canonical SKILL.md packs by category
 |-- adapters/            per-agent adapter documentation + fixtures
 |-- test/                Node tests (node:test)
-|-- docs/                installation, supported-agents, skill-development, assets/ ...
+|-- docs/                installation, supported-agents, skill-development, ...
 \-- .github/             workflows, issue templates, PR template
 ```
 
@@ -418,17 +258,8 @@ agent-skills/
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and
 [docs/skill-development.md](docs/skill-development.md). In short: add a
-`SKILL.md` under `skills/<category>/<id>/`, register it in
-`registry/skills.json`, run `npm run validate` and `npm test`, and open a pull
-request.
-
-## Troubleshooting
-
-See [docs/troubleshooting.md](docs/troubleshooting.md). Quick check:
-
-```bash
-npm run validate
-```
+`SKILL.md` under `skills/<category>/<id>/`, register it in `registry/skills.json`,
+run `npm run validate` and `npm test`, and open a pull request.
 
 ## Testing
 
@@ -438,25 +269,31 @@ npm run build
 npm test
 ```
 
-Tests use isolated temporary directories and never touch the real user profile.
+Tests use Node's built-in test runner and isolated temporary directories; they
+never touch the real user profile.
+
+## Troubleshooting
+
+See [docs/troubleshooting.md](docs/troubleshooting.md). Quick check:
+
+```bash
+npm run validate
+```
 
 ## Known limitations
 
-- Only the **Codex** and **Claude Code** adapters are `verified`. All others are
-  `documented` from vendor docs and may drift with agent versions.
+- Only **Codex** and **Claude Code** adapters are `verified`; the rest are
+  `documented` and can drift with agent versions.
 - The **SVG security scan is pattern-based** and is not a security guarantee.
-- **SVG rendering** requires an external renderer; the validation pipeline reports
-  it as `SKIP` when none is present.
-- The TUI requires an interactive terminal. In a non-TTY shell it prints a notice
-  and exits rather than hanging.
+- **SVG rendering** needs an external renderer; otherwise it reports `SKIP`.
+- The TUI needs an interactive terminal; in a non-TTY shell it prints a notice
+  and exits. Non-Windows is untested.
 
 ## Roadmap
 
-- Additional verified adapters as they can be tested against real installs.
+- Promote more adapters to `verified`.
 - macOS/Linux verification of the TUI.
 - More SVG validation (viewBox clipping detection, node-count heuristics).
-- A `search --remote` path is **not** planned until there is a signed registry;
-  offline correctness is preferred.
 
 ## License
 
@@ -465,9 +302,9 @@ Tests use isolated temporary directories and never touch the real user profile.
 ## Bahasa Indonesia (ringkasan)
 
 **Agent Skills** adalah pengelola *skill pack* modular untuk berbagai agen AI
-pengkodean. Fitur utama: 55 skill dalam 8 kategori, adaptor per agen, pemasang
-aman (project/user), pratinjau, manifes, serta pemeriksa kualitas deterministik
-dengan status `PASS`/`FAIL`/`WARN`/`SKIP`. Proyek ini **tidak** menjamin bebas
-dari "AI slop"; ia mengurangi masalah kualitas yang dapat dicegah dan selalu
-menyatakan keterbatasannya. Dokumentasi lengkap ada dalam bahasa Inggris di
-folder `docs/`.
+pengkodean. Jalankan `npx agentskillsmd` untuk membuka pemasang interaktif: pilih
+cakupan, agen, dan skill, lalu tinjau sebelum menulis berkas. Terdapat 55 skill
+dalam 8 kategori, adaptor per agen, dan pemeriksa kualitas deterministik dengan
+status `PASS`/`FAIL`/`WARN`/`SKIP`. Proyek ini **tidak** menjamin bebas dari "AI
+slop"; ia mengurangi masalah kualitas yang dapat dicegah dan selalu menyatakan
+keterbatasannya.

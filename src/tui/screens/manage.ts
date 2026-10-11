@@ -1,110 +1,73 @@
 /**
- * Maintenance actions reachable from the main menu: verify, update, uninstall.
+ * Uninstall action (reachable from the main menu).
  *
- * These are the only way to reach them now that the CLI has no subcommands.
- * Each delegates to the PowerShell engine (the single source of install truth).
+ * Shows the skills currently installed, then removes the chosen ones. Only files
+ * recorded in the manifest are removed; nothing else is touched.
  */
 
-import { select } from '@inquirer/prompts';
-import type { Registry, Scope } from '../../types';
+import { select, checkbox } from '@inquirer/prompts';
+import type { Registry } from '../../types';
 import { section, paint } from '../components/theme';
-import { verifyInstallation, uninstall } from '../../core/installer';
-import { updateInstalled } from '../../core/uninstaller';
+import { uninstall } from '../../core/installer';
 import { installedSkillIds, readManifest } from '../../core/manifest';
+import { getSkill } from '../../core/registry';
 
-async function pickScope(): Promise<{ scope: Scope; projectRoot: string } | 'back'> {
-  const choice = await select({
-    message: 'Scope',
-    loop: false,
-    choices: [
-      { name: `This project  ${paint(process.cwd(), 'dim')}`, value: 'project' as const },
-      { name: 'My user profile', value: 'user' as const },
-      { name: 'Back', value: 'back' as const },
-    ],
-  });
-  if (choice === 'back') return 'back';
-  return { scope: choice, projectRoot: process.cwd() };
-}
-
-export async function verifyScreen(_registry: Registry): Promise<'menu' | 'quit'> {
-  process.stdout.write(section('Verify installed skills', 'Check files against the manifest.'));
-
-  const target = await pickScope();
-  if (target === 'back') return 'menu';
-
-  const result = verifyInstallation(target.projectRoot, target.scope);
-  process.stdout.write('\n');
-  if (result.results.length === 0) {
-    process.stdout.write(`  ${paint('Nothing installed for this scope.', 'dim')}\n\n`);
-  } else {
-    for (const r of result.results) {
-      const tag =
-        r.status === 'PASS' ? paint('PASS', 'ok')
-        : r.status === 'FAIL' ? paint('FAIL', 'error')
-        : r.status === 'WARN' ? paint('WARN', 'warn')
-        : paint('SKIP', 'dim');
-      process.stdout.write(`  ${tag} ${r.name}${r.message ? ` - ${r.message}` : ''}\n`);
-    }
-    process.stdout.write('\n');
-  }
-  return 'menu';
-}
-
-export async function updateScreen(registry: Registry): Promise<'menu' | 'quit'> {
-  process.stdout.write(section('Update installed skills', 'Re-apply from the registry.'));
-
-  const target = await pickScope();
-  if (target === 'back') return 'menu';
-
-  const result = updateInstalled(registry, target.projectRoot, target.scope);
-  process.stdout.write('\n');
-  if (!result) {
-    process.stdout.write(`  ${paint('Nothing installed for this scope.', 'dim')}\n\n`);
-    return 'menu';
-  }
-  process.stdout.write(
-    `  ${paint(`${result.created} created, ${result.updated} updated, ${result.skipped} unchanged.`, 'ok')}\n\n`
-  );
-  return 'menu';
-}
+const SCOPE = 'project' as const;
 
 export async function uninstallScreen(registry: Registry): Promise<'menu' | 'quit'> {
-  process.stdout.write(section('Uninstall skills', 'Remove only files Agent Skills created.'));
+  process.stdout.write(section('Uninstall skills', 'Remove skills Agent Skills installed.'));
 
-  const target = await pickScope();
-  if (target === 'back') return 'menu';
+  const projectRoot = process.cwd();
 
   // Show what is installed so the user can decide.
   let installed: string[] = [];
   try {
-    installed = installedSkillIds(readManifest(target.projectRoot, target.scope));
+    installed = installedSkillIds(readManifest(projectRoot, SCOPE));
   } catch {
     installed = [];
   }
 
   if (installed.length === 0) {
-    process.stdout.write(`\n  ${paint('Nothing installed for this scope.', 'dim')}\n\n`);
+    process.stdout.write(`  ${paint('No skills are installed here.', 'dim')}\n\n`);
     return 'menu';
   }
 
-  const choice = await select({
-    message: 'Remove',
-    loop: false,
-    choices: [
-      { name: `All installed skills (${installed.length})`, value: '__all__' },
-      ...installed.map((id) => ({ name: id, value: id })),
-      { name: 'Back', value: '__back__' },
-    ],
+  // Label each installed skill with its friendly name when known.
+  const nameOf = (id: string): string => {
+    try {
+      return getSkill(registry, id).name;
+    } catch {
+      return id;
+    }
+  };
+
+  process.stdout.write(`  ${paint(`Installed skills (${installed.length}):`, 'bold')}\n`);
+  for (const id of installed) process.stdout.write(`    - ${nameOf(id)}  ${paint(`(${id})`, 'dim')}\n`);
+  process.stdout.write('\n');
+
+  const picked = await checkbox({
+    message: 'Select the skills to remove',
+    instructions: '\u2191/\u2193 to navigate  \u2022  Space: select  \u2022  a: all  \u2022  Enter: confirm',
+    pageSize: 20,
+    required: false,
+    choices: installed.map((id) => ({ name: `${nameOf(id)}  ${paint(`(${id})`, 'dim')}`, value: id })),
+    validate: (choices) => (choices.length === 0 ? 'Select at least one skill (or Esc to go back).' : true),
   });
 
-  if (choice === '__back__') return 'menu';
+  if (picked.length === 0) return 'menu';
 
-  const all = choice === '__all__';
-  const skillIds = all ? [] : [choice as string];
-  const result = uninstall(registry, target.projectRoot, target.scope, skillIds, []);
+  const result = uninstall(registry, projectRoot, SCOPE, picked, []);
+  const removed = result.results.filter((r) => r.status === 'PASS').length;
+  const stillInstalled = installed.filter((id) => !picked.includes(id));
 
   process.stdout.write('\n');
-  const removed = result.results.filter((r) => r.status === 'PASS').length;
-  process.stdout.write(`  ${paint(`Removed ${removed} item(s).`, 'ok')}\n\n`);
+  process.stdout.write(`  ${paint(`Removed ${removed} item(s).`, 'ok')}\n`);
+  if (stillInstalled.length > 0) {
+    process.stdout.write(`  ${paint(`Still installed (${stillInstalled.length}):`, 'dim')} ${stillInstalled.join(', ')}\n`);
+  } else {
+    process.stdout.write(`  ${paint('Nothing is installed here now.', 'dim')}\n`);
+  }
+  process.stdout.write('\n');
+
   return 'menu';
 }

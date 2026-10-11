@@ -62,15 +62,10 @@ removed by uninstall.
 
 ## Uninstall
 
-Run `npx agentskillsmd` and choose **Uninstall skills**. Only files Agent Skills
-created are removed. For aggregated files, only the managed block is removed;
-surrounding content is preserved.
-
-## Verifying an install
-
-Run `npx agentskillsmd` and choose **Verify installed skills**. This checks that
-each manifest entry still exists and matches its recorded hash. Files you edited
-after install are reported as `WARN` (modified), not `FAIL`.
+Run `npx agentskillsmd` and choose **Uninstall skills**. The screen lists the
+skills currently installed in the project; pick the ones to remove. Only files
+Agent Skills created are removed. For aggregated files, only the managed block is
+removed; surrounding content is preserved.
 
 ## Terminal support
 

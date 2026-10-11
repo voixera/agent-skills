@@ -21,6 +21,7 @@ The authoritative machine-readable definitions are in
 | Gemini CLI | `gemini-cli` | instructions | documented | `GEMINI.md` | `~/.gemini/GEMINI.md` |
 | Continue | `continue` | rules | documented | `.continue/rules/<skillId>.md` | `~/.continue/rules/<skillId>.md` |
 | OpenCode | `opencode` | instructions | documented | `AGENTS.md` | `~/.config/opencode/AGENTS.md` |
+| Hermes (Nous Research) | `hermes` | native | documented | `.hermes/skills/<skillId>/SKILL.md` | `~/.hermes/skills/<skillId>/SKILL.md` |
 | Universal Markdown | `universal` | instructions | documented | `AGENTS.md` | — |
 
 ## Support levels

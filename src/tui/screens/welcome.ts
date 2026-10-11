@@ -9,7 +9,7 @@ import { select } from '@inquirer/prompts';
 import type { Registry } from '../../types';
 import { banner, paint, toolVersion } from '../components/theme';
 
-export type MainAction = 'install' | 'verify' | 'update' | 'uninstall' | 'quit';
+export type MainAction = 'install' | 'uninstall' | 'quit';
 
 export async function welcomeScreen(registry: Registry): Promise<MainAction> {
   process.stdout.write(banner());
@@ -22,8 +22,6 @@ export async function welcomeScreen(registry: Registry): Promise<MainAction> {
     loop: false,
     choices: [
       { name: 'Install skills into your agent setup', value: 'install' },
-      { name: 'Verify installed skills', value: 'verify' },
-      { name: 'Update installed skills', value: 'update' },
       { name: 'Uninstall skills', value: 'uninstall' },
       { name: 'Exit', value: 'quit' },
     ],

@@ -8,7 +8,7 @@
 
 import type { InstallResult, Registry, UserSelection } from '../../types';
 import { paint } from '../components/theme';
-import { executeInstall, verifyInstallation } from '../../core/installer';
+import { executeInstall } from '../../core/installer';
 import { resolveDependencies } from '../../core/resolver';
 
 export interface ProgressResult {
@@ -64,27 +64,12 @@ export async function progressScreen(
   step('Writing skill files', outcome.failed === 0, `${outcome.created} new, ${outcome.updated} updated`);
   step('Writing installation manifest', outcome.failed === 0);
 
-  // Step 3: verify against the manifest (real check).
-  let verifyResults: InstallResult[] = [];
-  if (outcome.failed === 0) {
-    try {
-      const v = verifyInstallation(selection.projectRoot, selection.scope);
-      verifyResults = v.results;
-      const bad = v.results.filter((r) => r.status === 'FAIL').length;
-      step('Verifying installed files', bad === 0, bad === 0 ? 'all present' : `${bad} missing`);
-    } catch (err) {
-      step('Verifying installed files', false, (err as Error).message);
-    }
-  } else {
-    step('Verifying installed files', false, 'skipped (install failed)');
-  }
-
   process.stdout.write('\n');
 
   return {
     exitCode: outcome.exitCode,
     results: outcome.results,
-    verify: verifyResults,
+    verify: [],
     created: outcome.created,
     updated: outcome.updated,
     skipped: outcome.skipped,
