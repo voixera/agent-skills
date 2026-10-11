@@ -1,4 +1,4 @@
-﻿![Agent Skills](docs/assets/AgentSkills.png)
+![Agent Skills](docs/assets/AgentSkills.png)
 
 # Agent Skills
 
@@ -6,8 +6,8 @@
 
 Agent Skills is a modular toolkit that installs reusable, high-quality **skill
 packs** into supported AI coding agents. The goal is to reduce preventable
-quality problems in AI-assisted work â€” generic UI, brittle tests, missing edge
-cases, unsafe defaults, and hand-waved SVG â€” through actionable instructions,
+quality problems in AI-assisted work — generic UI, brittle tests, missing edge
+cases, unsafe defaults, and hand-waved SVG — through actionable instructions,
 deterministic checks, and transparent validation results.
 
 > **Honest scope.** This project does not make an AI infallible and does not
@@ -54,18 +54,18 @@ deterministic checks, and transparent validation results.
 
 ## Features
 
-- **Modular skill packs** â€” 55 focused skills across 8 categories.
-- **Canonical source, per-agent adapters** â€” one `SKILL.md` format, transformed
+- **Modular skill packs** — 55 focused skills across 8 categories.
+- **Canonical source, per-agent adapters** — one `SKILL.md` format, transformed
   into each agent's native shape. Adapters never blindly copy files.
-- **Multi-agent, multi-scope installer** â€” project or user scope, preview,
+- **Multi-agent, multi-scope installer** — project or user scope, preview,
   conflict detection, backups, and a manifest.
-- **Safe by default** â€” refuses to overwrite untracked files without `-Force`;
+- **Safe by default** — refuses to overwrite untracked files without `-Force`;
   uninstall only removes files the tool created.
-- **Deterministic validation** â€” registry schema checks, skill metadata,
+- **Deterministic validation** — registry schema checks, skill metadata,
   broken references, dependency cycles, and a five-stage SVG validator.
-- **Idempotent** â€” reinstalling the same skills reports "unchanged" and writes
+- **Idempotent** — reinstalling the same skills reports "unchanged" and writes
   nothing.
-- **Offline** â€” everything runs from a local checkout. No paid API, no network.
+- **Offline** — everything runs from a local checkout. No paid API, no network.
 
 ## Supported agents
 
@@ -85,9 +85,9 @@ deterministic checks, and transparent validation results.
 
 **Support level** describes how the agent discovers skills:
 
-- **native** â€” first-class discrete skill discovery (`<dir>/<skillId>/SKILL.md`).
-- **rules** â€” the agent reads per-file rule documents, not discrete skills.
-- **instructions** â€” the agent reads a single aggregated instruction file; skills
+- **native** — first-class discrete skill discovery (`<dir>/<skillId>/SKILL.md`).
+- **rules** — the agent reads per-file rule documents, not discrete skills.
+- **instructions** — the agent reads a single aggregated instruction file; skills
   are merged into a delimited managed block.
 
 **Evidence** is either `verified` (the path/format was observed in a real
@@ -96,13 +96,14 @@ documentation, not verified locally). See [docs/supported-agents.md](docs/suppor
 
 ## Quick start
 
-### Option A â€” `npx` (no install)
+Install and run with `npx` - no clone required:
 
 ```bash
 npx agentskillsmd
 ```
 
-Non-interactive example (install the minimal preset for Claude Code):
+That opens the interactive installer. For scripts and CI, use a non-interactive
+command:
 
 ```bash
 npx agentskillsmd install -Preset minimal -Agents claude-code -Scope project -Yes
@@ -117,75 +118,16 @@ npx agentskillsmd doctor
 npx agentskillsmd validate
 ```
 
-> The npm package is a thin launcher: it locates PowerShell and runs the same
-> `install.ps1` used everywhere else. It requires **PowerShell** on the machine â€”
-> Windows PowerShell 5.1 (bundled with Windows) or PowerShell 7+ on any OS. If
-> PowerShell is missing, the command fails with a clear message instead of
-> pretending to work. See [docs/installation.md](docs/installation.md#npx).
-
-### Option B â€” one-line install (PowerShell)
-
-No clone required. This downloads the repository and runs the installer:
-
-```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/voixera/agent-skills/main/installer/bootstrap.ps1)))
-```
-
-Non-interactive example (install the minimal preset for Claude Code):
-
-```powershell
-$env:AGENT_SKILLS_BOOTSTRAP_ARGS = 'install -Preset minimal -Agents claude-code -Scope project -Yes'
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/voixera/agent-skills/main/installer/bootstrap.ps1)))
-```
-
-> Running a remote script runs code from the internet. The safer pattern is to
-> save it first, read it, then run it:
->
-> ```powershell
-> irm https://raw.githubusercontent.com/voixera/agent-skills/main/installer/bootstrap.ps1 -OutFile bootstrap.ps1
-> # read bootstrap.ps1, then:
-> .\bootstrap.ps1
-> ```
->
-> See [docs/installation.md](docs/installation.md#remote-bootstrap-irm--iex) for the
-> full explanation of what the bootstrap does.
-
-### Option C â€” clone and run
-
-```powershell
-# 1. Clone the repository
-git clone https://github.com/voixera/agent-skills.git
-cd agent-skills
-
-# 2. Run the installer (interactive)
-.\installer\install.ps1
-```
-
-Or, non-interactively (PowerShell):
-
-```powershell
-.\installer\install.ps1 install -Preset svg-specialist -Agents codex,claude-code -Scope project -Preview
-.\installer\install.ps1 install -Preset svg-specialist -Agents codex,claude-code -Scope project -Yes
-```
-
-Or from CMD:
-
-```bat
-installer\install.cmd install -Preset svg-specialist -Agents codex,claude-code -Scope project -Yes
-```
+> **Requirements:** [Node.js](https://nodejs.org) 16+ (for `npx` itself) and
+> **PowerShell** - Windows PowerShell 5.1 (bundled with Windows) or PowerShell 7+
+> on any OS. The npm package is a thin launcher: it locates PowerShell and runs
+> the same installer. If PowerShell is missing, the command fails with a clear
+> message instead of pretending to work. See
+> [docs/installation.md](docs/installation.md#npx).
 
 ## Installation
 
-### Requirements
-
-- **Windows** with **Windows PowerShell 5.1** (included in Windows 10/11) or
-  PowerShell 7+. The toolkit is written for PowerShell 5.1 and also runs on 7+.
-- The `npx` route additionally requires **Node.js 16+** (for `npx` itself) and a
-  PowerShell host as above.
-- No administrator rights are required for **project**-scope installs.
-- The PowerShell/clone routes need no external modules and no network access.
-
-### Via npx
+Agent Skills installs through `npx`:
 
 ```bash
 npx agentskillsmd                 # interactive
@@ -193,30 +135,26 @@ npx agentskillsmd list -Category svg
 npx agentskillsmd install -Preset minimal -Agents claude-code -Scope project -Yes
 ```
 
-The npm package is a thin launcher over `install.ps1`; it requires PowerShell and
-fails clearly if none is found. See [docs/installation.md](docs/installation.md#npx).
+### Requirements
 
-### From CMD
+- **Node.js 16+** - provides the `npx` command.
+- **PowerShell** - Windows PowerShell 5.1 (included in Windows 10/11) or
+  PowerShell 7+ on macOS/Linux.
+- No administrator rights are required for **project**-scope installs.
 
-Use the thin launcher. It does not duplicate logic; it forwards to the
-PowerShell implementation.
+### What the launcher does
 
-```bat
-installer\install.cmd help
-installer\install.cmd list -Category svg
-installer\install.cmd install -Skills accessibility-a11y -Agents claude-code -Scope project -Yes
-```
+`npx agentskillsmd` downloads the `agentskillsmd` package, locates PowerShell, and
+runs the installer from the package. It is not a reimplementation: all logic
+lives in the PowerShell module, so there is a single implementation to audit.
+With no arguments it prints help; pass a command (like `install`) to act.
 
-### Local / offline
+### Scopes
 
-Everything is local. There is no download step and no remote manifest. To
-install from a pre-downloaded copy, run the scripts from that copy directly.
-
-### Execution policy
-
-The CMD launcher invokes PowerShell with `-ExecutionPolicy Bypass` for that
-process only. It does not change your machine-wide policy. See
-[docs/installation.md](docs/installation.md) for details and alternatives.
+| Scope | Writes to | Typical use |
+| --- | --- | --- |
+| `project` | The project directory (default: current) | Commit skills alongside the code. |
+| `user` | Your home configuration for each agent | Apply the same skills everywhere. |
 
 ## CLI reference
 
@@ -267,82 +205,82 @@ Common options:
 
 ### frontend
 
-- `frontend-architecture` â€” Frontend Architecture
-- `react-best-practices` â€” React Best Practices
-- `responsive-design` â€” Responsive Design
-- `accessibility-a11y` â€” Accessibility (a11y)
-- `frontend-performance` â€” Frontend Performance
-- `design-system` â€” Design System
-- `frontend-form-engineering` â€” Frontend Form Engineering
-- `animation-and-interaction` â€” Animation and Interaction
+- `frontend-architecture` — Frontend Architecture
+- `react-best-practices` — React Best Practices
+- `responsive-design` — Responsive Design
+- `accessibility-a11y` — Accessibility (a11y)
+- `frontend-performance` — Frontend Performance
+- `design-system` — Design System
+- `frontend-form-engineering` — Frontend Form Engineering
+- `animation-and-interaction` — Animation and Interaction
 
 ### backend
 
-- `api-design` â€” API Design
-- `database-design` â€” Database Design
-- `authentication-authorization` â€” Authentication and Authorization
-- `secure-backend` â€” Secure Backend
-- `backend-architecture` â€” Backend Architecture
-- `integration-engineering` â€” Integration Engineering
-- `backend-performance` â€” Backend Performance
-- `data-validation-and-integrity` â€” Data Validation and Integrity
+- `api-design` — API Design
+- `database-design` — Database Design
+- `authentication-authorization` — Authentication and Authorization
+- `secure-backend` — Secure Backend
+- `backend-architecture` — Backend Architecture
+- `integration-engineering` — Integration Engineering
+- `backend-performance` — Backend Performance
+- `data-validation-and-integrity` — Data Validation and Integrity
 
 ### ui-ux
 
-- `ui-ux-design` â€” UI/UX Design
-- `anti-generic-ui` â€” Anti-Generic UI
-- `design-from-reference` â€” Design From Reference
-- `microinteractions` â€” Microinteractions
+- `ui-ux-design` — UI/UX Design
+- `anti-generic-ui` — Anti-Generic UI
+- `design-from-reference` — Design From Reference
+- `microinteractions` — Microinteractions
 
 ### svg
 
-- `svg-craft` â€” SVG Craft
-- `custom-illustration` â€” Custom Illustration
-- `icon-design` â€” Icon Design
-- `logo-mark-design` â€” Logo Mark Design
-- `svg-optimization` â€” SVG Optimization
-- `svg-accessibility` â€” SVG Accessibility
-- `svg-security` â€” SVG Security
-- `svg-visual-review` â€” SVG Visual Review
+- `svg-craft` — SVG Craft
+- `custom-illustration` — Custom Illustration
+- `icon-design` — Icon Design
+- `logo-mark-design` — Logo Mark Design
+- `svg-optimization` — SVG Optimization
+- `svg-accessibility` — SVG Accessibility
+- `svg-security` — SVG Security
+- `svg-visual-review` — SVG Visual Review
 
 ### testing
 
-- `unit-testing` â€” Unit Testing
-- `integration-testing` â€” Integration Testing
-- `e2e-testing` â€” End-to-End Testing
-- `debugging-root-cause` â€” Debugging and Root Cause Analysis
-- `regression-review` â€” Regression Review
+- `unit-testing` — Unit Testing
+- `integration-testing` — Integration Testing
+- `e2e-testing` — End-to-End Testing
+- `debugging-root-cause` — Debugging and Root Cause Analysis
+- `regression-review` — Regression Review
 
 ### security
 
-- `secure-coding` â€” Secure Coding
-- `owasp-review` â€” OWASP-Oriented Web Security Review
-- `dependency-auditing` â€” Dependency Auditing
-- `secret-management` â€” Secret Management
-- `authorization-review` â€” Authorization Review
-- `threat-modeling` â€” Threat Modeling
-- `secure-file-handling` â€” Secure File Handling
-- `safe-error-handling` â€” Safe Error Handling
+- `secure-coding` — Secure Coding
+- `owasp-review` — OWASP-Oriented Web Security Review
+- `dependency-auditing` — Dependency Auditing
+- `secret-management` — Secret Management
+- `authorization-review` — Authorization Review
+- `threat-modeling` — Threat Modeling
+- `secure-file-handling` — Secure File Handling
+- `safe-error-handling` — Safe Error Handling
 
 ### devops
 
-- `git-workflow` â€” Git Workflow
-- `pull-request-review` â€” Pull Request Review
-- `docker` â€” Docker and Containers
-- `ci-cd` â€” CI/CD
-- `environment-config` â€” Environment Configuration
-- `deployment-readiness` â€” Deployment Readiness
-- `observability` â€” Logging and Observability
-- `migration-review` â€” Database Migration Review
-- `dependency-management` â€” Dependency Management
-- `release-notes` â€” Release Notes
+- `git-workflow` — Git Workflow
+- `pull-request-review` — Pull Request Review
+- `docker` — Docker and Containers
+- `ci-cd` — CI/CD
+- `environment-config` — Environment Configuration
+- `deployment-readiness` — Deployment Readiness
+- `observability` — Logging and Observability
+- `migration-review` — Database Migration Review
+- `dependency-management` — Dependency Management
+- `release-notes` — Release Notes
 
 ### anti-slop
 
-- `task-planning` â€” Task Planning
-- `code-review` â€” Code Review
-- `documentation` â€” Technical Documentation
-- `anti-slop-review` â€” Anti-Slop Review
+- `task-planning` — Task Planning
+- `code-review` — Code Review
+- `documentation` — Technical Documentation
+- `anti-slop-review` — Anti-Slop Review
 
 ## Presets
 
@@ -368,14 +306,14 @@ It is a set of eight skills (`svg-craft`, `custom-illustration`, `icon-design`,
 `logo-mark-design`, `svg-optimization`, `svg-accessibility`, `svg-security`,
 `svg-visual-review`) plus a validator that reports **five independent stages**:
 
-1. **XML parse** â€” is it well-formed?
-2. **Security scan** â€” scripts, event handlers, external references, unsafe URL
+1. **XML parse** — is it well-formed?
+2. **Security scan** — scripts, event handlers, external references, unsafe URL
    schemes, `foreignObject`, DTD entities.
-3. **Accessibility** â€” accessible name (`title`/`aria-label`) or explicit
+3. **Accessibility** — accessible name (`title`/`aria-label`) or explicit
    decorative marking.
-4. **Render** â€” only if a renderer is available (`rsvg-convert`, `inkscape`,
+4. **Render** — only if a renderer is available (`rsvg-convert`, `inkscape`,
    `magick`); otherwise reported as `SKIP` with a reason.
-5. **Visual review** â€” *never* performed automatically; always reported as not
+5. **Visual review** — *never* performed automatically; always reported as not
    done.
 
 An SVG is **not** "validated" just because it parses. See
@@ -390,10 +328,10 @@ An SVG is **not** "validated" just because it parses. See
 The quality checker distinguishes objective failures from subjective design
 preferences and uses four statuses:
 
-- `PASS` â€” the check ran and succeeded.
-- `FAIL` â€” the check ran and found a real problem.
-- `WARN` â€” the check ran and found something to review.
-- `SKIP` â€” the check did not run; **a reason is always given**, and a skip is
+- `PASS` — the check ran and succeeded.
+- `FAIL` — the check ran and found a real problem.
+- `WARN` — the check ran and found something to review.
+- `SKIP` — the check did not run; **a reason is always given**, and a skip is
   never treated as a pass.
 
 Available checks include: registry schema validation, skill metadata validation,
@@ -440,16 +378,16 @@ guarantee that an SVG is safe. It can produce false negatives. See
 
 ```text
 agent-skills/
-â”œâ”€â”€ README.md, LICENSE, CONTRIBUTING.md, SECURITY.md, CHANGELOG.md, package.json
-â”œâ”€â”€ bin/                 agent-skills.js (npm launcher)
-â”œâ”€â”€ registry/            agents.json, skills.json, presets.json + schema/
-â”œâ”€â”€ skills/              canonical SKILL.md packs by category
-â”œâ”€â”€ src/AgentSkills/     the PowerShell module (engine)
-â”œâ”€â”€ installer/           install.ps1 (entry point) + install.cmd + bootstrap.ps1
-â”œâ”€â”€ adapters/            per-agent adapter documentation + fixtures
-â”œâ”€â”€ tests/               unit/ integration/ fixtures/ + run-tests.ps1
-â”œâ”€â”€ docs/                installation, supported-agents, skill-development, assets/ ...
-â””â”€â”€ .github/             workflows, issue templates, PR template
+|-- README.md, LICENSE, CONTRIBUTING.md, SECURITY.md, CHANGELOG.md, package.json
+|-- bin/                 agent-skills.js (npm launcher)
+|-- registry/            agents.json, skills.json, presets.json + schema/
+|-- skills/              canonical SKILL.md packs by category
+|-- src/AgentSkills/     the PowerShell module (engine)
+|-- installer/           install.ps1 (entry point) + install.cmd + bootstrap.ps1
+|-- adapters/            per-agent adapter documentation + fixtures
+|-- tests/               unit/ integration/ fixtures/ + run-tests.ps1
+|-- docs/                installation, supported-agents, skill-development, assets/ ...
+\-- .github/             workflows, issue templates, PR template
 ```
 
 ## Contributing
