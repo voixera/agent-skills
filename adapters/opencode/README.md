@@ -1,39 +1,37 @@
 # OpenCode adapter
 
-Aggregates skills into the `AGENTS.md` project instructions file.
+Installs `SKILL.md` skills into OpenCode's skills directory.
 
 | Property | Value |
 | --- | --- |
 | Agent id | `opencode` |
-| Support level | `instructions` |
-| Evidence | `documented` |
-| Format | `aggregated-instructions` |
+| Support level | `native` |
+| Evidence | `verified` |
+| Format | `skill-md` |
 | Scopes | project, user |
 
 ## Output paths
 
-- Project: `AGENTS.md`
-- User: `~/.config/opencode/AGENTS.md`
+- Project: `.opencode/skills/<skillId>/SKILL.md`
+- User: `~/.config/opencode/skills/<skillId>/SKILL.md`
 
-## Transform
+## How OpenCode discovers skills
 
-OpenCode reads `AGENTS.md` project instructions. Skills are written into a
-delimited managed block; installs merge, and uninstall removes only the managed
-block. See the Gemini CLI adapter for the merge/uninstall semantics, which are
-shared.
+OpenCode discovers discrete skills under its `skills/` directory, one folder per
+skill containing a `SKILL.md`. It also reads `AGENTS.md` project instructions.
 
-## Evidence
+## Verification
 
-`documented`: based on OpenCode's public documentation, not verified against an
-OpenCode installation in the authoring environment.
+**Verified against a real installation.** On the authoring machine:
+
+- `~/.config/opencode/skills/` exists and holds per-skill `SKILL.md` folders.
+- Installing a skill with this tool wrote
+  `~/.config/opencode/skills/<skillId>/SKILL.md`, and uninstall removed it.
 
 ## Limitations
 
-- Content is aggregated, not a discrete skill.
-- `AGENTS.md` is also the Universal Markdown convention; installing both the
-  `opencode` and `universal` agents to the same project writes the same file.
-  The installer deduplicates identical writes and never produces a conflict for
-  managed-block merges.
+- `AGENTS.md` is also the Universal Markdown convention; only the `skills/`
+  directory is used here so skills stay discrete.
 
 ## References
 

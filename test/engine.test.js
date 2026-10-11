@@ -110,10 +110,10 @@ test('force overwrites and takes a backup', () => {
 test('aggregated block merges and preserves user content', () => {
   const tmp = tempDir();
   try {
-    fs.writeFileSync(path.join(tmp, 'GEMINI.md'), '# Project\n\nUser instructions.');
-    executeInstall({ registry: reg, projectRoot: tmp, scope: 'project', agentIds: ['gemini-cli'], skillIds: ['svg-craft'] });
-    executeInstall({ registry: reg, projectRoot: tmp, scope: 'project', agentIds: ['gemini-cli'], skillIds: ['icon-design'] });
-    const c = fs.readFileSync(path.join(tmp, 'GEMINI.md'), 'utf8');
+    fs.writeFileSync(path.join(tmp, 'AGENTS.md'), '# Project\n\nUser instructions.');
+    executeInstall({ registry: reg, projectRoot: tmp, scope: 'project', agentIds: ['universal'], skillIds: ['svg-craft'] });
+    executeInstall({ registry: reg, projectRoot: tmp, scope: 'project', agentIds: ['universal'], skillIds: ['icon-design'] });
+    const c = fs.readFileSync(path.join(tmp, 'AGENTS.md'), 'utf8');
     assert.match(c, /User instructions/);
     assert.match(c, /SVG Craft/);
     assert.match(c, /Icon Design/);
@@ -139,10 +139,10 @@ test('uninstall removes only managed files and keeps user files', () => {
 test('uninstall one skill keeps another in a shared block', () => {
   const tmp = tempDir();
   try {
-    executeInstall({ registry: reg, projectRoot: tmp, scope: 'project', agentIds: ['gemini-cli'], skillIds: ['svg-craft'] });
-    executeInstall({ registry: reg, projectRoot: tmp, scope: 'project', agentIds: ['gemini-cli'], skillIds: ['icon-design'] });
+    executeInstall({ registry: reg, projectRoot: tmp, scope: 'project', agentIds: ['universal'], skillIds: ['svg-craft'] });
+    executeInstall({ registry: reg, projectRoot: tmp, scope: 'project', agentIds: ['universal'], skillIds: ['icon-design'] });
     uninstall(reg, tmp, 'project', ['svg-craft'], []);
-    const c = fs.readFileSync(path.join(tmp, 'GEMINI.md'), 'utf8');
+    const c = fs.readFileSync(path.join(tmp, 'AGENTS.md'), 'utf8');
     assert.doesNotMatch(c, /## SVG Craft/);
     assert.match(c, /Icon Design/);
   } finally {

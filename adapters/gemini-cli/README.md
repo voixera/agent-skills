@@ -1,46 +1,38 @@
 # Gemini CLI adapter
 
-Aggregates skills into the hierarchical `GEMINI.md` context file.
+Installs `SKILL.md` skills into Gemini CLI's skills directory.
 
 | Property | Value |
 | --- | --- |
 | Agent id | `gemini-cli` |
-| Support level | `instructions` |
-| Evidence | `documented` |
-| Format | `aggregated-instructions` |
+| Support level | `native` |
+| Evidence | `verified` |
+| Format | `skill-md` |
 | Scopes | project, user |
 
 ## Output paths
 
-- Project: `GEMINI.md`
-- User: `~/.gemini/GEMINI.md`
+- Project: `.gemini/skills/<skillId>/SKILL.md`
+- User: `~/.gemini/skills/<skillId>/SKILL.md`
 
-## Transform
+## How Gemini discovers skills
 
-Gemini CLI has no discrete skill mechanism, so all skills are written into a
-single delimited managed block inside `GEMINI.md`:
+Gemini CLI discovers discrete skills under its `skills/` directory, one folder
+per skill containing a `SKILL.md` with `name` and `description` frontmatter.
 
-```text
-<!-- agent-skills:begin -->
-... installed skills ...
-<!-- agent-skills:end -->
-```
+## Verification
 
-Installing a second skill **merges** into the existing block rather than
-replacing it, so previously installed skills survive. Existing content outside
-the markers is preserved untouched. Uninstalling one skill regenerates the block
-with the survivors; the file is removed only when the last skill is removed and
-the file would otherwise be empty.
+**Verified against a real installation.** On the authoring machine:
 
-## Evidence
-
-`documented`: based on Gemini CLI's public documentation, not verified against a
-Gemini CLI installation in the authoring environment.
+- `~/.gemini/skills/<name>/SKILL.md` exists for installed Gemini skills, using
+  the same `name`/`description` frontmatter this project writes.
+- Installing a skill with this tool wrote
+  `~/.gemini/skills/<skillId>/SKILL.md`, and uninstall removed it cleanly.
 
 ## Limitations
 
-- Content is aggregated, not a discrete skill.
-- Only content between the managed markers is ever modified.
+- Gemini also reads hierarchical `GEMINI.md` context files; skills are the
+  discrete mechanism used here.
 
 ## References
 

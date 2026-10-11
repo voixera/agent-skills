@@ -101,9 +101,9 @@ That is the entire requirement list - no PowerShell, Python, or other runtime.
 | Windsurf | `windsurf` | rules | documented | project, user |
 | Cline | `cline` | rules | documented | project |
 | Roo Code | `roo-code` | rules | documented | project |
-| Gemini CLI | `gemini-cli` | instructions | documented | project, user |
+| Gemini CLI | `gemini-cli` | native | verified | project, user |
 | Continue | `continue` | rules | documented | project, user |
-| OpenCode | `opencode` | instructions | documented | project, user |
+| OpenCode | `opencode` | native | verified | project, user |
 | Hermes (Nous Research) | `hermes` | native | documented | project, user |
 | Universal Markdown | `universal` | instructions | documented | project |
 
@@ -112,7 +112,7 @@ That is the entire requirement list - no PowerShell, Python, or other runtime.
   aggregated file with a managed block).
 - **Evidence** - `verified` means the path/format was observed in a real
   installation; `documented` means it comes from vendor docs and was not tested
-  locally. Only Codex and Claude Code are `verified`.
+  locally. Codex, Claude Code, Gemini CLI, and OpenCode are `verified`.
 
 ## Skill catalog
 

@@ -18,9 +18,9 @@ The authoritative machine-readable definitions are in
 | Windsurf | `windsurf` | rules | documented | `.windsurf/rules/<skillId>.md` | `~/.codeium/windsurf/memories/global_rules.md` |
 | Cline | `cline` | rules | documented | `.clinerules/<skillId>.md` | — |
 | Roo Code | `roo-code` | rules | documented | `.roo/rules/<skillId>.md` | — |
-| Gemini CLI | `gemini-cli` | instructions | documented | `GEMINI.md` | `~/.gemini/GEMINI.md` |
+| Gemini CLI | `gemini-cli` | native | verified | `.gemini/skills/<skillId>/SKILL.md` | `~/.gemini/skills/<skillId>/SKILL.md` |
 | Continue | `continue` | rules | documented | `.continue/rules/<skillId>.md` | `~/.continue/rules/<skillId>.md` |
-| OpenCode | `opencode` | instructions | documented | `AGENTS.md` | `~/.config/opencode/AGENTS.md` |
+| OpenCode | `opencode` | native | verified | `.opencode/skills/<skillId>/SKILL.md` | `~/.config/opencode/skills/<skillId>/SKILL.md` |
 | Hermes (Nous Research) | `hermes` | native | documented | `.hermes/skills/<skillId>/SKILL.md` | `~/.hermes/skills/<skillId>/SKILL.md` |
 | Universal Markdown | `universal` | instructions | documented | `AGENTS.md` | — |
 

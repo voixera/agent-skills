@@ -155,20 +155,20 @@
       "id": "gemini-cli",
       "name": "Gemini CLI",
       "adapter": "gemini-cli",
-      "supportLevel": "instructions",
-      "evidence": "documented",
+      "supportLevel": "native",
+      "evidence": "verified",
       "scopes": ["project", "user"],
-      "features": ["instructions"],
+      "features": ["skills"],
       "paths": {
-        "project": "GEMINI.md",
-        "user": "~/.gemini/GEMINI.md"
+        "project": ".gemini/skills/<skillId>/SKILL.md",
+        "user": "~/.gemini/skills/<skillId>/SKILL.md"
       },
-      "detect": ["GEMINI.md", "~/.gemini"],
-      "format": "aggregated-instructions",
+      "detect": ["GEMINI.md", ".gemini", "~/.gemini"],
+      "format": "skill-md",
       "limitations": [
-        "Gemini CLI reads hierarchical GEMINI.md context files; there is no discrete skill mechanism.",
-        "The adapter maintains a delimited managed block inside GEMINI.md so uninstall removes only its own content.",
-        "Not verified in this environment."
+        "Gemini CLI discovers SKILL.md skills under .gemini/skills/ (project) and ~/.gemini/skills/ (user).",
+        "Confirmed against a real installation: ~/.gemini/skills/<name>/SKILL.md with name/description frontmatter.",
+        "Gemini also reads hierarchical GEMINI.md context files; skills are the discrete mechanism."
       ],
       "docs": "https://github.com/google-gemini/gemini-cli"
     },
@@ -197,20 +197,20 @@
       "id": "opencode",
       "name": "OpenCode",
       "adapter": "opencode",
-      "supportLevel": "instructions",
-      "evidence": "documented",
+      "supportLevel": "native",
+      "evidence": "verified",
       "scopes": ["project", "user"],
-      "features": ["instructions"],
+      "features": ["skills"],
       "paths": {
-        "project": "AGENTS.md",
-        "user": "~/.config/opencode/AGENTS.md"
+        "project": ".opencode/skills/<skillId>/SKILL.md",
+        "user": "~/.config/opencode/skills/<skillId>/SKILL.md"
       },
-      "detect": ["AGENTS.md", ".opencode", "~/.config/opencode"],
-      "format": "aggregated-instructions",
+      "detect": [".opencode", "AGENTS.md", "~/.config/opencode"],
+      "format": "skill-md",
       "limitations": [
-        "OpenCode reads AGENTS.md project instructions.",
-        "The adapter maintains a delimited managed block inside AGENTS.md.",
-        "Not verified in this environment."
+        "OpenCode discovers SKILL.md skills under .opencode/skills/ (project) and ~/.config/opencode/skills/ (user).",
+        "Confirmed against a real installation: ~/.config/opencode/skills/<name>/SKILL.md.",
+        "OpenCode also reads AGENTS.md project instructions; skills are the discrete mechanism."
       ],
       "docs": "https://opencode.ai/docs/rules/"
     },

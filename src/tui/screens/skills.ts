@@ -1,15 +1,12 @@
 /**
  * SCREEN D - Skill pack selection.
  *
- * Two steps:
- *   1. Pick a preset (or Custom). Picking a preset preselects its skills but
- *      does not lock them.
- *   2. Customise the skill set with a checkbox list grouped by category.
- *
- * Only skills present in the validated registry are shown.
+ * Choose one or more presets (multi-select). The chosen presets' skills are
+ * merged and preselected in a customise list, so you can still toggle individual
+ * skills before installing.
  */
 
-import { select, checkbox } from '@inquirer/prompts';
+import { checkbox } from '@inquirer/prompts';
 import type { Registry } from '../../types';
 import { section, paint } from '../components/theme';
 import { skillsByCategory } from '../../core/registry';
@@ -35,10 +32,9 @@ export async function skillsScreen(
   registry: Registry,
   _agentIds: string[]
 ): Promise<SkillChoice | 'back'> {
-  process.stdout.write(
-    section('Select skill packs', 'Start from a preset, then customise.')
-  );
+  process.stdout.write(section('Select skill packs', 'Choose one or more presets.'));
 
+  // Step 1: multi-select presets.
   const presetChoices = registry.presets.presets
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((p) => ({
@@ -46,31 +42,26 @@ export async function skillsScreen(
       value: p.id,
     }));
 
-  presetChoices.push({
-    name: `Custom Setup\n      ${paint('Choose individual skills', 'dim')}`,
-    value: '__custom__',
-  });
-  presetChoices.push({ name: paint('\u2190 Back', 'dim'), value: '__back__' });
-
-  const presetId = await select({
-    message: 'Choose a starting point',
-    instructions: { navigation: '\u2191/\u2193 to navigate', pager: 'Enter: confirm' },
-    loop: false,
+  const pickedPresets = await checkbox({
+    message: 'Choose your skills (space to toggle)',
+    instructions: '\u2191/\u2193 to navigate  \u2022  Space: select  \u2022  a: all  \u2022  Enter: confirm',
     pageSize: 12,
+    required: false,
     choices: presetChoices,
+    validate: (choices) => (choices.length === 0 ? 'Select at least one preset.' : true),
   });
 
-  if (presetId === '__back__') return 'back';
-
-  let initialSelection: string[] = [];
-  if (presetId !== '__custom__') {
-    initialSelection = expandPreset(registry, presetId);
-    process.stdout.write(
-      `\n  ${paint(`Preset '${presetId}' preselected ${initialSelection.length} skill(s).`, 'ok')}\n` +
-        `  ${paint('You can still toggle individual skills below.', 'dim')}\n`
-    );
+  // Merge the selected presets' skills.
+  const merged = new Set<string>();
+  for (const id of pickedPresets) {
+    for (const skillId of expandPreset(registry, id)) merged.add(skillId);
   }
 
+  process.stdout.write(
+    `\n  ${paint(`Selected ${pickedPresets.length} preset(s) - ${merged.size} skill(s).`, 'ok')}\n`
+  );
+
+  // Step 2: show the combined skill list, all preselected and still editable.
   const byCategory = skillsByCategory(registry);
   const orderedCategories = Object.keys(CATEGORY_TITLES).filter((c) => byCategory.has(c));
   for (const c of byCategory.keys()) if (!orderedCategories.includes(c)) orderedCategories.push(c);
@@ -86,14 +77,14 @@ export async function skillsScreen(
       choices.push({
         name: `${skill.name}  ${paint(`(${skill.id})`, 'dim')}`,
         value: skill.id,
-        checked: initialSelection.includes(skill.id),
+        checked: merged.has(skill.id),
       });
     }
   }
 
   process.stdout.write('\n');
   const picked = await checkbox({
-    message: 'Extra skills to install',
+    message: 'Review and customise the skills to install',
     instructions: '\u2191/\u2193 to navigate  \u2022  Space: select  \u2022  a: all  \u2022  Enter: confirm',
     choices,
     pageSize: 20,
@@ -108,6 +99,6 @@ export async function skillsScreen(
   const skillIds = picked.filter((v) => !v.startsWith('__header_'));
   return {
     skillIds,
-    presetId: presetId === '__custom__' ? undefined : presetId,
+    presetId: pickedPresets.join(', '),
   };
 }
