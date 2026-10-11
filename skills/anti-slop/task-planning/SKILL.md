@@ -48,7 +48,7 @@ for reducing risk, not paperwork.
 
 A short, ordered list, for example:
 
-```
+```text
 Goal: Add CSV export to the orders list. Out of scope: scheduling exports.
 1. Add a serializer for order rows. Verify: unit test on 3 cases. [ ]
 2. Add the export endpoint (streaming, auth-checked). Verify: integration test. [ ]
