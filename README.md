@@ -96,73 +96,73 @@ documentation, not verified locally). See [docs/supported-agents.md](docs/suppor
 
 ## Quick start
 
-Install and run with `npx` - no clone required:
+Run this in an interactive terminal - it opens the installer immediately. There
+is **no subcommand to type**:
 
 ```bash
 npx agentskillsmd
 ```
 
-That opens a guided, interactive setup: a 4-step wizard where you **choose** with
-the keyboard instead of memorizing commands.
+You get a guided TUI: a large logo, then keyboard-driven screens where you
+*choose* agents and skill packs.
 
 ```text
-  ------------------------------------------------------
-   AGENT SKILLS
-   Multi-Agent Skills Manager  v1.0.0
-  ------------------------------------------------------
+   ___                    __     _____ __ __ _ __
+  / _ | ___ ____ ___  ___ / /_   / ___// //_// //_/
+ / __ |/ _`/ -_) _ \/ -_) __/  _\__ \/ ,<  / ,<
+/_/ |_/\_, /\__/_//_/\__/\__/  /____//_/|_|/_/|_|
+      /___/
 
-  1/4  Where should skills be installed?
-  > This project  (C:\dev\my-app)
-    My user profile  (applies everywhere)
+  AGENT SKILLS  v1.1.0
+  Multi-agent skills manager and anti-slop engineering toolkit.
+  55 skills  •  11 agents  •  7 presets
 
-  2/4  Which AI agents do you use?
-     [x] OpenAI Codex           [native]
-  >  [ ] Claude Code           [native]
-     [ ] Cursor                [rules]
-     [ ] Gemini CLI            [instructions]
-     (up/down move, space toggles, "a" all, enter confirms)
-
-  3/4  Start from a preset, or pick skills yourself?
-     SVG Specialist
-  >  Custom
-
-  4/4  Review
-    Summary
-      Agents  : codex, claude-code
-      Skills  : svg-craft, icon-design, ...
-      Changes : 12 new, 0 updated, 0 unchanged
-    Files
-      [new   ] .codex/skills/svg-craft/SKILL.md
-      [new   ] .claude/skills/svg-craft/SKILL.md
-  Apply these changes? [y/N]
+? What would you like to do?
+❯ Start installation
+  Exit
 ```
 
-- **Arrow keys** move, **space** toggles a skill/agent, **a** selects all,
-  **enter** confirms. Run it in a normal terminal for the full experience.
-- On hosts that cannot read keys (piped/redirected input), it automatically
-  falls back to simple numbered prompts, so it works in any script.
+### The flow
 
-For scripts and CI, skip the wizard with a non-interactive command:
+1. **Welcome** - logo, version, and `Start installation`.
+2. **Scope** - this project, your user profile, or a custom path (each explained).
+3. **Agents** - multi-select with support level and evidence shown
+   (`verified` / `documented`).
+4. **Skills** - pick a preset (it preselects its skills), then customise;
+   presets are never locked.
+5. **Preview** - agents, skills, scope, files to create/update, conflicts, and
+   dependencies. Nothing is written until you confirm.
+6. **Install** - real progress for real work (resolve, write, manifest, verify).
+7. **Complete** - an accurate report plus how to verify / update / uninstall.
+
+**Keys:** `↑`/`↓` navigate, `space` toggles, `a` toggles all, `enter` confirms,
+`esc` goes back, `ctrl+c` quits safely. No mouse required.
+
+> **Terminal support.** Built with `@inquirer/prompts`; works in Windows Terminal,
+> PowerShell, CMD, and other ANSI-capable terminals. If no colour is available,
+> output degrades to plain text. In a **non-interactive** shell (piped input) it
+> prints the supported commands instead of hanging.
+
+### Non-interactive (CI / scripts)
+
+Advanced commands exist for automation and never replace the default experience:
 
 ```bash
 npx agentskillsmd install -Preset minimal -Agents claude-code -Scope project -Yes
-```
-
-Other examples:
-
-```bash
 npx agentskillsmd list -Category svg
-npx agentskillsmd install -Preset svg-specialist -Agents codex,claude-code -Preview
-npx agentskillsmd doctor
+npx agentskillsmd agents
+npx agentskillsmd presets
 npx agentskillsmd validate
+npx agentskillsmd verify
+npx agentskillsmd update
+npx agentskillsmd uninstall -Skills accessibility-a11y
 ```
 
-> **Requirements:** [Node.js](https://nodejs.org) 16+ (for `npx` itself) and
+> **Requirements:** [Node.js](https://nodejs.org) 18+ (for `npx` and the TUI) and
 > **PowerShell** - Windows PowerShell 5.1 (bundled with Windows) or PowerShell 7+
-> on any OS. The npm package is a thin launcher: it locates PowerShell and runs
-> the same installer. If PowerShell is missing, the command fails with a clear
-> message instead of pretending to work. See
-> [docs/installation.md](docs/installation.md#npx).
+> on any OS. The TUI is the interface; the installation engine underneath it is
+> PowerShell. If PowerShell is missing, the TUI reports a clear error instead of
+> pretending to work. See [docs/installation.md](docs/installation.md#npx).
 
 ## Installation
 
@@ -183,10 +183,17 @@ npx agentskillsmd install -Preset minimal -Agents claude-code -Scope project -Ye
 
 ### What the launcher does
 
-`npx agentskillsmd` downloads the `agentskillsmd` package, locates PowerShell, and
-runs the installer from the package. It is not a reimplementation: all logic
-lives in the PowerShell module, so there is a single implementation to audit.
-With no arguments it prints help; pass a command (like `install`) to act.
+`npx agentskillsmd` runs a small Node.js/TypeScript program. It renders the TUI
+and calls the **PowerShell installation engine** to do the actual file writes.
+The two are deliberately separate:
+
+- The **TUI** (`src/tui`, `src/cli`) never writes files; it reads the registry,
+  builds a dry-run plan, and shows it.
+- The **engine** (`src/AgentSkills`, `installer/install.ps1`) is the single
+  source of install truth. It writes files, the manifest, and the backups.
+
+Running with no arguments launches the interactive installer. Passing a command
+(`list`, `install`, ...) uses the non-interactive path.
 
 ### Scopes
 
@@ -418,13 +425,19 @@ guarantee that an SVG is safe. It can produce false negatives. See
 ```text
 agent-skills/
 |-- README.md, LICENSE, CONTRIBUTING.md, SECURITY.md, CHANGELOG.md, package.json
-|-- bin/                 agent-skills.js (npm launcher)
+|-- bin/                 agentskillsmd.js (npm executable)
+|-- src/
+|   |-- cli/             entry point + advanced commands
+|   |-- tui/             TUI app, screens, components
+|   |-- core/            registry, resolver, planner, installer bridge, manifest
+|   |-- types/           shared TypeScript types
+|   \-- AgentSkills/      the PowerShell module (install engine)
+|-- installer/           install.ps1 (engine entry) + install.cmd + bootstrap.ps1
 |-- registry/            agents.json, skills.json, presets.json + schema/
 |-- skills/              canonical SKILL.md packs by category
-|-- src/AgentSkills/     the PowerShell module (engine)
-|-- installer/           install.ps1 (entry point) + install.cmd + bootstrap.ps1
 |-- adapters/            per-agent adapter documentation + fixtures
-|-- tests/               unit/ integration/ fixtures/ + run-tests.ps1
+|-- test/                Node tests (node:test)
+|-- tests/               PowerShell tests (unit/ integration/ fixtures/)
 |-- docs/                installation, supported-agents, skill-development, assets/ ...
 \-- .github/             workflows, issue templates, PR template
 ```
@@ -448,14 +461,24 @@ See [docs/troubleshooting.md](docs/troubleshooting.md). Quick checks:
 
 ## Testing
 
+Node (TUI + core):
+
+```bash
+npm install
+npm run build
+npm test
+```
+
+PowerShell (engine):
+
 ```powershell
 .\tests\run-tests.ps1                 # all tests
 .\tests\run-tests.ps1 -Suite unit     # unit only
 .\tests\run-tests.ps1 -Suite integration
 ```
 
-Tests use isolated temporary directories and never touch the real user profile.
-Pester is not required.
+All tests use isolated temporary directories and never touch the real user
+profile. Pester is not required.
 
 ## Known limitations
 

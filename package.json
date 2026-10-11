@@ -1,7 +1,7 @@
 {
   "name": "agentskillsmd",
-  "version": "1.0.0",
-  "description": "Multi-agent skills manager and anti-slop engineering toolkit. Installs modular SKILL.md-based skill packs into supported AI coding agents.",
+  "version": "1.1.0",
+  "description": "Interactive multi-agent skills manager and anti-slop engineering toolkit. Installs modular SKILL.md-based skill packs into supported AI coding agents.",
   "keywords": [
     "ai",
     "agents",
@@ -12,6 +12,7 @@
     "copilot",
     "svg",
     "cli",
+    "tui",
     "tooling"
   ],
   "license": "MIT",
@@ -24,13 +25,16 @@
   "bugs": {
     "url": "https://github.com/voixera/agent-skills/issues"
   },
+  "type": "commonjs",
   "bin": {
-    "agentskillsmd": "bin/agent-skills.js"
+    "agentskillsmd": "bin/agentskillsmd.js"
   },
+  "main": "dist/cli/entry.js",
   "files": [
     "bin/",
+    "dist/",
     "installer/",
-    "src/",
+    "src/AgentSkills/",
     "registry/",
     "skills/",
     "adapters/",
@@ -40,7 +44,7 @@
     "CHANGELOG.md"
   ],
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "os": [
     "win32",
@@ -48,9 +52,20 @@
     "darwin"
   ],
   "scripts": {
-    "test": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1",
+    "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build",
+    "start": "node bin/agentskillsmd.js",
+    "test": "node --test test/",
+    "test:ps": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1",
     "validate": "powershell -NoProfile -ExecutionPolicy Bypass -File installer/install.ps1 validate",
-    "prepublishOnly": "node -e \"require('fs').accessSync('installer/install.ps1');console.log('installer present')\""
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^7.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0"
   },
   "publishConfig": {
     "access": "public"
