@@ -8,7 +8,9 @@ One command installs a curated set of engineering rules into your AI coding
 agents - so they write better frontend, backend, tests, security, and SVG
 instead of generic, same-as-everything output.
 
-<!-- Badges: fill in the npm/CI links once published. -->
+```bash
+npx agentskillsmd
+```
 
 ## Why
 
@@ -48,7 +50,7 @@ npx agentskillsmd
   ██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║     ███████║██║  ██╗██║███████╗███████╗███████║
 
   Anti-slop rules for AI coding agents.
-  Multi-agent skills manager  •  v2.0.0
+  Multi-agent skills manager  •  v2.1.0
   55 skills  •  12 agents  •  7 presets
 
 ? What would you like to do?
@@ -114,8 +116,7 @@ That is the entire requirement list - no PowerShell, Python, or other runtime.
   aggregated file with a managed block).
 - **Evidence** - `verified` means the path/format was observed in a real
   installation; `documented` means it comes from vendor docs and was not tested
-  locally. Only Codex and Claude Code are `verified`. See
-  [docs/supported-agents.md](docs/supported-agents.md).
+  locally. Only Codex and Claude Code are `verified`.
 
 ## Skill catalog
 
@@ -132,4 +133,3 @@ steps, quality criteria, anti-patterns, and a validation strategy.
 | security | 8 | secure-coding, owasp-review, dependency-auditing, secret-management, authorization-review, threat-modeling, secure-file-handling, safe-error-handling |
 | devops | 10 | git-workflow, pull-request-review, docker, ci-cd, environment-config, deployment-readiness, observability, migration-review, dependency-management, release-notes |
 | anti-slop | 4 | task-planning, code-review, documentation, anti-slop-review |
-
