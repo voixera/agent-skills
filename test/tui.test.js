@@ -43,25 +43,29 @@ test('non-TTY is detected and does not launch the interactive TUI', () => {
   // It must NOT have blocked waiting for input.
 });
 
-test('interactive branch can be driven to the welcome screen and exit', () => {
-  // Force the interactive path by overriding isTTY, then send Enter (Start) and
-  // then an arrow-down + Enter to reach Exit. If driving fails, we still assert
-  // the banner was produced.
+test('interactive branch renders the welcome screen when a TTY is present', () => {
+  // Force the interactive branch by overriding isTTY. The banner and the first
+  // prompt are written before any key handling, so we assert on those and then
+  // close stdin to let the process end without depending on signal timing.
   const driver = `
     Object.defineProperty(process.stdin, 'isTTY', { value: true });
     Object.defineProperty(process.stdout, 'isTTY', { value: true });
-    // Feed: Enter (choose "Start installation"), then Ctrl+C to quit cleanly.
-    setTimeout(() => process.kill(process.pid, 'SIGINT'), 1500);
+    if (!process.stdout.columns) {
+      Object.defineProperty(process.stdout, 'columns', { value: 80 });
+    }
     require(${JSON.stringify(path.join(root, 'dist', 'cli', 'entry.js'))});
+    // Let the first screen render, then end input so inquirer rejects cleanly.
+    setTimeout(() => { try { process.stdin.push(null); } catch (_) {} }, 1200);
+    setTimeout(() => { process.exitCode = 0; process.exit(0); }, 2500);
   `;
   const r = spawnSync(process.execPath, ['-e', driver], {
     encoding: 'utf8',
     input: '\n',
     env: { ...process.env, AGENT_SKILLS_NO_COLOR: '1', FORCE_COLOR: '0' },
-    timeout: 30000,
+    timeout: 20000,
   });
-  // The banner must appear when the TUI runs.
+  // The logo/banner must appear when the TUI runs.
   assert.match(r.stdout, /AGENT SKILLS/);
-  // The welcome question must appear.
+  // The first interactive question must appear.
   assert.match(r.stdout, /What would you like to do\?/);
 });

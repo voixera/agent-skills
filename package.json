@@ -55,7 +55,7 @@
     "build": "tsc -p tsconfig.json",
     "prepare": "npm run build",
     "start": "node bin/agentskillsmd.js",
-    "test": "node --test test/",
+    "test": "node --test --test-timeout=120000 test/",
     "test:ps": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1",
     "validate": "powershell -NoProfile -ExecutionPolicy Bypass -File installer/install.ps1 validate",
     "prepublishOnly": "npm run build"

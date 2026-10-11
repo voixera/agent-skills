@@ -191,15 +191,21 @@ async function main(): Promise<number> {
   return runApp();
 }
 
-// Restore terminal state on interrupt.
+// Restore terminal state on interrupt. We never call process.exit() from the
+// signal handler directly: that can truncate buffered stdout on some terminals.
+// Instead we set the exit code and let the process end naturally, which flushes.
+let interrupted = false;
 process.on('SIGINT', () => {
+  interrupted = true;
   process.stdout.write('\n');
-  process.exit(130);
+  process.exitCode = 130;
 });
 
 main()
-  .then((code) => process.exit(code))
+  .then((code) => {
+    process.exitCode = interrupted ? 130 : code;
+  })
   .catch((err) => {
     process.stderr.write(`\n  ${paint('Error:', 'error')} ${(err as Error).message}\n`);
-    process.exit(1);
+    process.exitCode = 1;
   });
