@@ -1,4 +1,4 @@
-![Agent Skills installer](docs/assets/AgentSkills.png)
+﻿![Agent Skills installer](docs/assets/AgentSkills.png)
 
 # Agent Skills
 
@@ -23,7 +23,6 @@ that with **explicit, testable rules** - not vibes:
   failures.
 - **Hand-waved SVG** - "syntactically valid" but clipped, inaccessible, unsafe,
   or visually incoherent.
-
 
 ## Quick start
 
