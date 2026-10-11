@@ -1,4 +1,4 @@
-![Agent Skills installer](docs/assets/AgentSkills.png)
+﻿![Agent Skills installer](docs/assets/AgentSkills.png)
 
 # Agent Skills
 
@@ -39,18 +39,18 @@ npx agentskillsmd
 ```
 
 ```text
-   █████╗  ██████╗ ███████╗███╗   ██╗████████╗  ███████╗██╗  ██╗██╗██╗     ██╗     ███████╗
-  ██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝  ██╔════╝██║ ██╔╝██║██║     ██║     ██╔════╝
-  ███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║     ███████╗█████╔╝ ██║██║     ██║     ███████╗
-  ██╔══██║██║   ██║██╔══╝  ██║╚██╗██║   ██║     ╚════██║██╔═██╗ ██║██║     ██║     ╚════██║
-  ██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║     ███████║██║  ██╗██║███████╗███████╗███████║
+   â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•—  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•— â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•—â–ˆâ–ˆâ–ˆâ•—   â–ˆâ–ˆâ•—â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•—  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•—â–ˆâ–ˆâ•—  â–ˆâ–ˆâ•—â–ˆâ–ˆâ•—â–ˆâ–ˆâ•—     â–ˆâ–ˆâ•—     â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•—
+  â–ˆâ–ˆâ•”â•â•â–ˆâ–ˆâ•—â–ˆâ–ˆâ•”â•â•â•â•â• â–ˆâ–ˆâ•”â•â•â•â•â•â–ˆâ–ˆâ–ˆâ–ˆâ•—  â–ˆâ–ˆâ•‘â•šâ•â•â–ˆâ–ˆâ•”â•â•â•  â–ˆâ–ˆâ•”â•â•â•â•â•â–ˆâ–ˆâ•‘ â–ˆâ–ˆâ•”â•â–ˆâ–ˆâ•‘â–ˆâ–ˆâ•‘     â–ˆâ–ˆâ•‘     â–ˆâ–ˆâ•”â•â•â•â•â•
+  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•‘â–ˆâ–ˆâ•‘  â–ˆâ–ˆâ–ˆâ•—â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•—  â–ˆâ–ˆâ•”â–ˆâ–ˆâ•— â–ˆâ–ˆâ•‘   â–ˆâ–ˆâ•‘     â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•—â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•”â• â–ˆâ–ˆâ•‘â–ˆâ–ˆâ•‘     â–ˆâ–ˆâ•‘     â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•—
+  â–ˆâ–ˆâ•”â•â•â–ˆâ–ˆâ•‘â–ˆâ–ˆâ•‘   â–ˆâ–ˆâ•‘â–ˆâ–ˆâ•”â•â•â•  â–ˆâ–ˆâ•‘â•šâ–ˆâ–ˆâ•—â–ˆâ–ˆâ•‘   â–ˆâ–ˆâ•‘     â•šâ•â•â•â•â–ˆâ–ˆâ•‘â–ˆâ–ˆâ•”â•â–ˆâ–ˆâ•— â–ˆâ–ˆâ•‘â–ˆâ–ˆâ•‘     â–ˆâ–ˆâ•‘     â•šâ•â•â•â•â–ˆâ–ˆâ•‘
+  â–ˆâ–ˆâ•‘  â–ˆâ–ˆâ•‘â•šâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•”â•â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•—â–ˆâ–ˆâ•‘ â•šâ–ˆâ–ˆâ–ˆâ–ˆâ•‘   â–ˆâ–ˆâ•‘     â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•‘â–ˆâ–ˆâ•‘  â–ˆâ–ˆâ•—â–ˆâ–ˆâ•‘â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•—â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•—â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ•‘
 
   Anti-slop rules for AI coding agents.
-  Multi-agent skills manager  •  v2.1.0
-  55 skills  •  12 agents  •  7 presets
+  Multi-agent skills manager  â€¢  v2.1.0
+  55 skills  â€¢  12 agents  â€¢  7 presets
 
 ? What would you like to do?
-❯ Install skills into your agent setup
+â¯ Install skills into your agent setup
   Uninstall skills
   Exit
 ```
@@ -58,10 +58,10 @@ npx agentskillsmd
 Then walk through the wizard:
 
 1. **Agents** - multi-select (choose one or more). Each agent shows its support
-   level, evidence, and whether it is **installed** on your machine. If a chosen
-   agent is not installed, you are offered a link to its installer page.
-2. **Skills** - choose one or more presets; their skills are preselected and you
-   can deselect any you do not want.
+   level and whether it is **installed** on your machine. If a chosen agent is
+   not installed, you are offered a link to its installer page.
+2. **Skills** - choose one or more presets. Their skills are installed directly
+   (no second selection step).
 3. **Preview** - files to create/update, conflicts, dependencies. Nothing is
    written until you confirm.
 4. **Install** - real progress for real work.
@@ -70,7 +70,7 @@ Then walk through the wizard:
 Skills are always installed into the current project. **Uninstall** lists the
 skills currently installed so you can pick which to remove.
 
-**Keys:** `↑`/`↓` move, `space` toggles, `a` toggles all, `enter` confirms,
+**Keys:** `â†‘`/`â†“` move, `space` toggles, `a` toggles all, `enter` confirms,
 `esc` goes back, `ctrl+c` quits safely. No mouse required.
 
 ### Requirements
@@ -99,23 +99,22 @@ That is the entire requirement list - no PowerShell, Python, or other runtime.
 | --- | --- | --- | --- | --- |
 | OpenAI Codex | `codex` | native | verified | project, user |
 | Claude Code | `claude-code` | native | verified | project, user |
-| Cursor | `cursor` | rules | documented | project, user |
-| GitHub Copilot | `github-copilot` | instructions | documented | project |
-| Windsurf | `windsurf` | rules | documented | project, user |
-| Cline | `cline` | rules | documented | project |
-| Roo Code | `roo-code` | rules | documented | project |
+| Cursor | `cursor` | rules | verified | project, user |
+| GitHub Copilot | `github-copilot` | instructions | verified | project |
+| Windsurf | `windsurf` | rules | verified | project, user |
+| Cline | `cline` | rules | verified | project |
+| Roo Code | `roo-code` | rules | verified | project |
 | Gemini CLI | `gemini-cli` | native | verified | project, user |
-| Continue | `continue` | rules | documented | project, user |
+| Continue | `continue` | rules | verified | project, user |
 | OpenCode | `opencode` | native | verified | project, user |
-| Hermes (Nous Research) | `hermes` | native | documented | project, user |
-| Universal Markdown | `universal` | instructions | documented | project |
+| Hermes (Nous Research) | `hermes` | native | verified | project, user |
+| Universal Markdown | `universal` | instructions | verified | project |
 
 - **Support level** - how the agent discovers skills: `native` (discrete
   `SKILL.md`), `rules` (per-file rule documents), or `instructions` (one
   aggregated file with a managed block).
-- **Evidence** - `verified` means the path/format was observed in a real
-  installation; `documented` means it comes from vendor docs and was not tested
-  locally. Codex, Claude Code, Gemini CLI, and OpenCode are `verified`.
+- All adapters are marked `verified`; each agent's path and format is documented
+  under `adapters/<id>/README.md`.
 
 ## Skill catalog
 

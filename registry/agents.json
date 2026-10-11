@@ -78,7 +78,7 @@
       "name": "Cursor",
       "adapter": "cursor",
       "supportLevel": "rules",
-      "evidence": "documented",
+      "evidence": "verified",
       "scopes": [
         "project",
         "user"
@@ -108,7 +108,7 @@
       "name": "GitHub Copilot",
       "adapter": "copilot",
       "supportLevel": "instructions",
-      "evidence": "documented",
+      "evidence": "verified",
       "scopes": [
         "project"
       ],
@@ -136,7 +136,7 @@
       "name": "Windsurf",
       "adapter": "windsurf",
       "supportLevel": "rules",
-      "evidence": "documented",
+      "evidence": "verified",
       "scopes": [
         "project",
         "user"
@@ -166,7 +166,7 @@
       "name": "Cline",
       "adapter": "cline",
       "supportLevel": "rules",
-      "evidence": "documented",
+      "evidence": "verified",
       "scopes": [
         "project"
       ],
@@ -192,7 +192,7 @@
       "name": "Roo Code",
       "adapter": "roo-code",
       "supportLevel": "rules",
-      "evidence": "documented",
+      "evidence": "verified",
       "scopes": [
         "project"
       ],
@@ -250,7 +250,7 @@
       "name": "Continue",
       "adapter": "continue",
       "supportLevel": "rules",
-      "evidence": "documented",
+      "evidence": "verified",
       "scopes": [
         "project",
         "user"
@@ -311,7 +311,7 @@
       "name": "Hermes (Nous Research)",
       "adapter": "hermes",
       "supportLevel": "native",
-      "evidence": "documented",
+      "evidence": "verified",
       "scopes": [
         "project",
         "user"
@@ -343,7 +343,7 @@
       "name": "Universal Markdown",
       "adapter": "universal",
       "supportLevel": "instructions",
-      "evidence": "documented",
+      "evidence": "verified",
       "scopes": [
         "project"
       ],

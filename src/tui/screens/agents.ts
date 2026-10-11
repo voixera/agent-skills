@@ -48,11 +48,9 @@ export async function agentsScreen(
     ...candidates.map((a) => {
       const det = detectAgent(a, projectRoot);
       const status = det.installed ? paint('[installed]', 'ok') : paint('[not installed]', 'warn');
-      const verified = a.evidence === 'verified' ? paint('verified', 'ok') : paint('documented', 'warn');
       return {
-        name: `${a.name}  ${paint(`[${a.supportLevel}]`, 'dim')}  ${verified}  ${status}`,
+        name: `${a.name}  ${paint(`[${a.supportLevel}]`, 'dim')}  ${status}`,
         value: a.id,
-        checked: det.installed && a.evidence === 'verified',
       };
     }),
     { name: paint('\u2190 Back', 'dim'), value: '__back__' },
