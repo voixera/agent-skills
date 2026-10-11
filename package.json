@@ -1,5 +1,5 @@
 {
-  "name": "agent-skills",
+  "name": "agentskillsmd",
   "version": "1.0.0",
   "description": "Multi-agent skills manager and anti-slop engineering toolkit. Installs modular SKILL.md-based skill packs into supported AI coding agents.",
   "keywords": [
@@ -25,7 +25,7 @@
     "url": "https://github.com/voixera/agent-skills/issues"
   },
   "bin": {
-    "agent-skills": "bin/agent-skills.js"
+    "agentskillsmd": "bin/agent-skills.js"
   },
   "files": [
     "bin/",

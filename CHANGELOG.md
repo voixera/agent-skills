@@ -37,8 +37,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remote bootstrap (`installer/bootstrap.ps1`) backing the `irm | iex` one-liner;
   it downloads the repository archive and runs the installer, with a documented
   save-read-run alternative.
-- npm package (`package.json` + `bin/agent-skills.js`) providing a thin
-  `npx agent-skills` launcher that locates PowerShell and runs the installer.
+- npm package `agentskillsmd` (`package.json` + `bin/agent-skills.js`) providing a
+  thin `npx agentskillsmd` launcher that locates PowerShell and runs the
+  installer. Published under this name because the unscoped `agent-skills` name
+  on npm belongs to an unrelated publisher.
 - CLI commands: `list`, `search`, `agents`, `presets`, `install`, `uninstall`,
   `update`, `verify`, `validate`, `doctor`, `help`, with documented exit codes.
 - Quality checker and SVG validator producing `PASS` / `FAIL` / `WARN` / `SKIP`

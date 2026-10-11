@@ -19,13 +19,13 @@ The toolkit targets PowerShell **5.1** and is tested on
 ## npx
 
 ```bash
-npx agent-skills
+npx agentskillsmd
 ```
 
 Or non-interactively:
 
 ```bash
-npx agent-skills install -Preset svg-specialist -Agents codex,claude-code -Scope project -Yes
+npx agentskillsmd install -Preset svg-specialist -Agents codex,claude-code -Scope project -Yes
 ```
 
 The npm package is a **thin launcher** (`bin/agent-skills.js`). It:
@@ -38,7 +38,7 @@ The npm package is a **thin launcher** (`bin/agent-skills.js`). It:
 It is **not** a reimplementation — all logic stays in the PowerShell module. Two
 consequences worth knowing:
 
-- **PowerShell is required.** Without it, `npx agent-skills` prints a clear error
+- **PowerShell is required.** Without it, `npx agentskillsmd` prints a clear error
   and exits non-zero; it does not fake success. On Windows, PowerShell 5.1 is
   already installed. On macOS/Linux, install PowerShell 7+.
 - **Running with no arguments prints help** rather than opening an interactive
@@ -110,12 +110,16 @@ $env:AGENT_SKILLS_BOOTSTRAP_ARGS = 'install -Preset minimal -Agents claude-code 
 $env:AGENT_SKILLS_ARCHIVE_URL = 'https://github.com/you/agent-skills/archive/refs/tags/v1.0.0.zip'
 ```
 
-### Why not `npx`?
+### `npx` is a launcher, not a Node rewrite
 
-There is **no npm package**. Agent Skills is a PowerShell tool, and publishing it
-to npm would imply a Node runtime that does not exist here. If you see
-`npx agent-skills` anywhere, it is not an official command. npm packaging is
-listed on the roadmap.
+The npm package `agentskillsmd` is published mainly as a convenient launcher. It
+does not reimplement anything in Node: it locates PowerShell and runs the same
+`installer/install.ps1`. See the [npx](#npx) section above for details and
+requirements.
+
+The unscoped name `agent-skills` on npm belongs to an unrelated publisher, which
+is why this project publishes as **`agentskillsmd`**. The command is
+`npx agentskillsmd`.
 
 ## PowerShell usage
 
